@@ -65,7 +65,9 @@ public:
 	float		m_TempoDelta;
     SoundTouch	m_SoundTouch;
 	LONGLONG	m_lastMediaTime;
+	LONGLONG	m_lastVideoMediaTime;
 	REFERENCE_TIME m_lastRefTime;
+	REFERENCE_TIME m_lastVideoRefTime;
 
 	BOOL		m_queueOutput;
 	DWORD		m_queueThreadPriority;

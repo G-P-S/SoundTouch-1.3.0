@@ -107,9 +107,11 @@ CUnknown * WINAPI CTempoChangeFilter::CreateInstance(LPUNKNOWN punk, HRESULT *ph
 CTempoChangeFilter::CTempoChangeFilter(IUnknown* pUnknown, HRESULT* pHR) :
 	CBaseFilter(NAME("CFTempoChange"), pUnknown, &m_lock, CLSID_CFTempoChange)
 {
-	m_TempoDelta = -4.0;
+	m_TempoDelta = 0.0; // -4.0
 	m_lastMediaTime = 0;
+	m_lastVideoMediaTime = 0;
 	m_lastRefTime = 0;
+	m_lastVideoRefTime = 0;
 
 	m_SoundTouch.setSampleRate(48000);
 	m_SoundTouch.setChannels(2);
@@ -182,6 +184,12 @@ STDMETHODIMP CTempoChangeFilter::Stop()
 	CAutoLock lock2(&m_receiveLock);
 	if(m_pOutputPin && m_pOutputPin->IsConnected()) m_pOutputPin->Inactive();
 	m_State = State_Stopped;
+
+	m_lastMediaTime = 0;
+	m_lastVideoMediaTime = 0;
+	m_lastRefTime = 0;
+	m_lastVideoRefTime = 0;
+
 	return S_OK;
 }
 

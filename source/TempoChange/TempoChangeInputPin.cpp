@@ -300,6 +300,37 @@ BOOL ExtractFrameSize(const CMediaType& mt, int& rWidth, int& rHeight, int& rBPP
 	return extractedFrameSize;
 }
 
+
+//-------------------------------------------------------------------------------------------
+// ExtractFrameSize
+//-------------------------------------------------------------------------------------------
+BOOL GetType(const CMediaType& mt, DWORD &avgframetime )
+{
+	BOOL videotype = FALSE;
+	GUID FType = *mt.FormatType();
+	avgframetime = 0;
+
+	if(FType == FORMAT_VideoInfo)
+	{
+		VIDEOINFO* pVI = (VIDEOINFO*)mt.Format();
+		if(pVI)
+		{
+			videotype = TRUE;
+			avgframetime = pVI->AvgTimePerFrame;
+		}
+	}
+	else if(FType == FORMAT_VideoInfo2)
+	{
+		VIDEOINFOHEADER2* pVI = (VIDEOINFOHEADER2*)mt.Format();
+		if(pVI)
+		{
+			videotype = TRUE;
+			avgframetime = pVI->AvgTimePerFrame;
+		}
+	}
+	return !videotype;
+}
+
 //-------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------
 HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInputSample, 
@@ -319,58 +350,114 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 	if(pFilter->m_TempoDelta)
 	{
 		int returnedsamples = 0;
-		pFilter->m_SoundTouch.putSamples((SAMPLETYPE *)pIn, length / 4);
+		DWORD avgframetime = 0;
+		bool  IsAudio = GetType(m_mt, avgframetime);
 
-		returnedsamples = pFilter->m_SoundTouch.receiveSamples((SAMPLETYPE *)pOut, 32768);
+		if(IsAudio)
+		{
+			pFilter->m_SoundTouch.putSamples((SAMPLETYPE *)pIn, length / 4);
 
-		HR_BAIL(pOutputSample->SetActualDataLength(returnedsamples*4));
+			returnedsamples = pFilter->m_SoundTouch.receiveSamples((SAMPLETYPE *)pOut, 32768);
 
-
-		IMediaSample2 *pOutSample2;
-		if (SUCCEEDED(pOutputSample->QueryInterface(IID_IMediaSample2,
-												 (void **)&pOutSample2))) {
-			/*  Modify it */
-			AM_SAMPLE2_PROPERTIES OutProps;
-			EXECUTE_ASSERT(SUCCEEDED(pOutSample2->GetProperties(
-				FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, tStart), (PBYTE)&OutProps)
-			));
+			HR_BAIL(pOutputSample->SetActualDataLength(returnedsamples*4));
 
 
-	//		OutProps.dwTypeSpecificFlags = pProps->dwTypeSpecificFlags;
-	//		OutProps.dwSampleFlags =
-	//			(OutProps.dwSampleFlags & AM_SAMPLE_TYPECHANGED) |
-	//			(pProps->dwSampleFlags & ~AM_SAMPLE_TYPECHANGED);
-	        OutProps.cbData = FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, dwStreamId);
+			IMediaSample2 *pOutSample2;
+			if (SUCCEEDED(pOutputSample->QueryInterface(IID_IMediaSample2,
+													 (void **)&pOutSample2))) {
+				/*  Modify it */
+				AM_SAMPLE2_PROPERTIES OutProps;
+				EXECUTE_ASSERT(SUCCEEDED(pOutSample2->GetProperties(
+					FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, tStart), (PBYTE)&OutProps)
+				));
+
+
+		//		OutProps.dwTypeSpecificFlags = pProps->dwTypeSpecificFlags;
+		//		OutProps.dwSampleFlags =
+		//			(OutProps.dwSampleFlags & AM_SAMPLE_TYPECHANGED) |
+		//			(pProps->dwSampleFlags & ~AM_SAMPLE_TYPECHANGED);
+				OutProps.cbData = FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, dwStreamId);
  
-	//		if (pProps->dwSampleFlags & AM_SAMPLE_DATADISCONTINUITY) {
-	//			m_bSampleSkipped = FALSE;
-	//		}
-	
-
-			OutProps.tStart = pFilter->m_lastRefTime;
-			pFilter->m_lastRefTime += (REFERENCE_TIME)returnedsamples * 10000000 / 48000;
-			OutProps.tStop  = pFilter->m_lastRefTime;
-
-			HRESULT hr = pOutSample2->SetProperties(
-				FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, dwStreamId),
-				(PBYTE)&OutProps
-			);
-			pOutSample2->Release();
-		} else {
+		//		if (pProps->dwSampleFlags & AM_SAMPLE_DATADISCONTINUITY) {
+		//			m_bSampleSkipped = FALSE;
+		//		}
 		
-			// Copy the media times
 
-			LONGLONG MediaStart,MediaEnd;
-			LONGLONG NewMediaStart = pFilter->m_lastMediaTime;
-			LONGLONG NewMediaEnd = pFilter->m_lastMediaTime + (LONGLONG)returnedsamples;
+				OutProps.tStart = pFilter->m_lastRefTime;
+				pFilter->m_lastRefTime += (REFERENCE_TIME)returnedsamples * 10000000 / 48000;
+				OutProps.tStop  = pFilter->m_lastRefTime;
 
-			pInputSample->GetMediaTime(&MediaStart,&MediaEnd);
-			pOutputSample->SetMediaTime(&NewMediaStart,&NewMediaEnd);
+				HRESULT hr = pOutSample2->SetProperties(
+					FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, dwStreamId),
+					(PBYTE)&OutProps
+				);
+				pOutSample2->Release();
+			} else {
 			
-			pFilter->m_lastMediaTime = NewMediaEnd;
-		}
+				// Copy the media times
 
+				LONGLONG MediaStart,MediaEnd;
+				LONGLONG NewMediaStart = pFilter->m_lastMediaTime;
+				LONGLONG NewMediaEnd = pFilter->m_lastMediaTime + (LONGLONG)returnedsamples;
+
+				pInputSample->GetMediaTime(&MediaStart,&MediaEnd);
+				pOutputSample->SetMediaTime(&NewMediaStart,&NewMediaEnd);
+				
+				pFilter->m_lastMediaTime = NewMediaEnd;
+			}
+		}
+		else
+		{
+			HR_BAIL(pOutputSample->SetActualDataLength(length));
+			CopyMemory(pOut, pIn, length);
+
+			avgframetime = (DWORD)((double)avgframetime / (100.0 + pFilter->m_TempoDelta) * 100);
+
+
+			IMediaSample2 *pOutSample2;
+			if (SUCCEEDED(pOutputSample->QueryInterface(IID_IMediaSample2,
+													 (void **)&pOutSample2))) {
+				/*  Modify it */
+				AM_SAMPLE2_PROPERTIES OutProps;
+				EXECUTE_ASSERT(SUCCEEDED(pOutSample2->GetProperties(
+					FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, tStart), (PBYTE)&OutProps)
+				));
+
+
+		//		OutProps.dwTypeSpecificFlags = pProps->dwTypeSpecificFlags;
+		//		OutProps.dwSampleFlags =
+		//			(OutProps.dwSampleFlags & AM_SAMPLE_TYPECHANGED) |
+		//			(pProps->dwSampleFlags & ~AM_SAMPLE_TYPECHANGED);
+				OutProps.cbData = FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, dwStreamId);
+ 
+		//		if (pProps->dwSampleFlags & AM_SAMPLE_DATADISCONTINUITY) {
+		//			m_bSampleSkipped = FALSE;
+		//		}
 		
+
+				OutProps.tStart = pFilter->m_lastVideoRefTime;
+				pFilter->m_lastVideoRefTime += (REFERENCE_TIME)avgframetime;
+				OutProps.tStop  = pFilter->m_lastVideoRefTime;
+
+				HRESULT hr = pOutSample2->SetProperties(
+					FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, dwStreamId),
+					(PBYTE)&OutProps
+				);
+				pOutSample2->Release();
+			} else {
+			
+				// Copy the media times
+
+				LONGLONG MediaStart,MediaEnd;
+				LONGLONG NewMediaStart = pFilter->m_lastVideoMediaTime;
+				LONGLONG NewMediaEnd = pFilter->m_lastVideoMediaTime + (LONGLONG)avgframetime;
+
+				pInputSample->GetMediaTime(&MediaStart,&MediaEnd);
+				pOutputSample->SetMediaTime(&NewMediaStart,&NewMediaEnd);
+				
+				pFilter->m_lastVideoMediaTime = NewMediaEnd;
+			}
+		}
 	}
 	else
 	{
