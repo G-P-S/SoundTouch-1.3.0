@@ -308,6 +308,7 @@ BOOL GetType(const CMediaType& mt, DWORD &avgframetime )
 {
 	BOOL videotype = FALSE;
 	GUID FType = *mt.FormatType();
+//	GUID FTypeNULL = {0};
 	avgframetime = 0;
 
 	if(FType == FORMAT_VideoInfo)

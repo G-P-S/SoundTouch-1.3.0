@@ -118,7 +118,35 @@ HRESULT CTempoChangeOutputPin::GetMediaType(int iPosition, CMediaType *pmt)
 		if(FAILED(hr)) return hr;
 		if(count == iPosition)
 		{
-			pmt->Set(CMediaType(*pMT));
+			DWORD avgframetime = 0;
+			GUID FType;
+			CMediaType MT(*pMT);
+
+			FType = *MT.FormatType();
+			
+
+			if(FType == FORMAT_VideoInfo)
+			{
+				VIDEOINFO* pVI = (VIDEOINFO*)MT.Format();
+				if(pVI)
+				{
+					avgframetime = pVI->AvgTimePerFrame;
+					avgframetime = (DWORD)((double)avgframetime / (100.0 + ((CTempoChangeFilter*)m_pFilter)->m_TempoDelta) * 100);
+					pVI->AvgTimePerFrame = avgframetime;
+				}
+			}
+			else if(FType == FORMAT_VideoInfo2)
+			{
+				VIDEOINFOHEADER2* pVI = (VIDEOINFOHEADER2*)MT.Format();
+				if(pVI)
+				{
+					avgframetime = pVI->AvgTimePerFrame;
+					avgframetime = (DWORD)((double)avgframetime / (100.0 + ((CTempoChangeFilter*)m_pFilter)->m_TempoDelta) * 100);
+					pVI->AvgTimePerFrame = avgframetime;
+				}
+			}
+
+			pmt->Set(MT);
 			DeleteMediaType(pMT);
 			return S_OK;
 		}
