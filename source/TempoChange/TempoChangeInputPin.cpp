@@ -325,14 +325,52 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 
 		HR_BAIL(pOutputSample->SetActualDataLength(returnedsamples*4));
 
-		LONGLONG MediaStart,MediaEnd;
-		LONGLONG NewMediaStart = pFilter->m_lastMediaTime;
-		LONGLONG NewMediaEnd = pFilter->m_lastMediaTime + (LONGLONG)returnedsamples;
 
-		pInputSample->GetMediaTime(&MediaStart,&MediaEnd);
-		pOutputSample->SetMediaTime(&NewMediaStart,&NewMediaEnd);
+		IMediaSample2 *pOutSample2;
+		if (SUCCEEDED(pOutputSample->QueryInterface(IID_IMediaSample2,
+												 (void **)&pOutSample2))) {
+			/*  Modify it */
+			AM_SAMPLE2_PROPERTIES OutProps;
+			EXECUTE_ASSERT(SUCCEEDED(pOutSample2->GetProperties(
+				FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, tStart), (PBYTE)&OutProps)
+			));
+
+
+	//		OutProps.dwTypeSpecificFlags = pProps->dwTypeSpecificFlags;
+	//		OutProps.dwSampleFlags =
+	//			(OutProps.dwSampleFlags & AM_SAMPLE_TYPECHANGED) |
+	//			(pProps->dwSampleFlags & ~AM_SAMPLE_TYPECHANGED);
+	        OutProps.cbData = FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, dwStreamId);
+ 
+	//		if (pProps->dwSampleFlags & AM_SAMPLE_DATADISCONTINUITY) {
+	//			m_bSampleSkipped = FALSE;
+	//		}
+	
+
+			OutProps.tStart = pFilter->m_lastRefTime;
+			pFilter->m_lastRefTime += (REFERENCE_TIME)returnedsamples * 10000000 / 48000;
+			OutProps.tStop  = pFilter->m_lastRefTime;
+
+			HRESULT hr = pOutSample2->SetProperties(
+				FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, dwStreamId),
+				(PBYTE)&OutProps
+			);
+			pOutSample2->Release();
+		} else {
 		
-		pFilter->m_lastMediaTime = NewMediaEnd;
+			// Copy the media times
+
+			LONGLONG MediaStart,MediaEnd;
+			LONGLONG NewMediaStart = pFilter->m_lastMediaTime;
+			LONGLONG NewMediaEnd = pFilter->m_lastMediaTime + (LONGLONG)returnedsamples;
+
+			pInputSample->GetMediaTime(&MediaStart,&MediaEnd);
+			pOutputSample->SetMediaTime(&NewMediaStart,&NewMediaEnd);
+			
+			pFilter->m_lastMediaTime = NewMediaEnd;
+		}
+
+		
 	}
 	else
 	{

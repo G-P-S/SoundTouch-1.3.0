@@ -109,6 +109,7 @@ CTempoChangeFilter::CTempoChangeFilter(IUnknown* pUnknown, HRESULT* pHR) :
 {
 	m_TempoDelta = -4.0;
 	m_lastMediaTime = 0;
+	m_lastRefTime = 0;
 
 	m_SoundTouch.setSampleRate(48000);
 	m_SoundTouch.setChannels(2);
