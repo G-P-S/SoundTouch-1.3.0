@@ -5,7 +5,7 @@
 
 
 /* File created by MIDL compiler version 5.01.0164 */
-/* at Tue Apr 05 11:55:36 2005
+/* at Tue Apr 05 11:59:44 2005
  */
 /* Compiler settings for C:\HD\RTPipe\SoundTouch\source\TempoChange\TempoChange.idl:
     Os (OptLev=s), W1, Zp8, env=Win32, ms_ext, c_ext
