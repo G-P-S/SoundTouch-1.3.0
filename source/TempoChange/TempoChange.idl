@@ -1,0 +1,38 @@
+import "unknwn.idl";
+
+[
+	object,
+	uuid(9CE7AB1A-61B0-48bb-BE36-0B4B177EEEF7),
+	pointer_default(unique)
+]
+interface ICFTempoChangeStats : IUnknown
+{
+	HRESULT SetTempoDelta([in]float newTempoDeltas);	// default = 0.0
+	// Turn on output queuing, must be stopped when called
+	// queueOutput (FALSE) - queue (thread) output?
+	// threadPriority - priority for thread
+	// queuelenght - number of samples to queue
+	HRESULT SetQueueOutput([in]BOOL queueOutput, [in]DWORD threadPriority, [in]LONG queueLength);				
+};
+
+[
+	uuid(C4697889-8B32-4096-B3C1-7E9022DB292B),
+	version(1.0)
+]
+library CFTempoChangeLibrary
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	[
+		uuid(EAC6F857-8243-4022-B888-9334976D780F)
+	]
+	coclass CFTempoChangeClass
+	{
+		[default] interface ICFTempoChangeStats;
+	};
+};
+
+
+
+
