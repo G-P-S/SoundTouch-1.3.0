@@ -7,12 +7,7 @@ import "unknwn.idl";
 ]
 interface ICFTempoChangeStats : IUnknown
 {
-	HRESULT SetTempoDelta([in]float newTempoDeltas);	// default = 0.0
-	// Turn on output queuing, must be stopped when called
-	// queueOutput (FALSE) - queue (thread) output?
-	// threadPriority - priority for thread
-	// queuelenght - number of samples to queue
-	HRESULT SetQueueOutput([in]BOOL queueOutput, [in]DWORD threadPriority, [in]LONG queueLength);				
+	HRESULT SetTempoDelta([in]float newTempoDeltas);	// default = 0.0				
 };
 
 [

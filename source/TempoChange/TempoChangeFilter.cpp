@@ -123,11 +123,6 @@ CTempoChangeFilter::CTempoChangeFilter(IUnknown* pUnknown, HRESULT* pHR) :
 	m_SoundTouch.setSetting(SETTING_USE_QUICKSEEK, 0);
 	m_SoundTouch.setSetting(SETTING_USE_AA_FILTER, 1);
 
-
-	m_queueOutput = FALSE;
-	m_queueThreadPriority = THREAD_PRIORITY_NORMAL;
-	m_queueLength = 30;
-
 	m_pInputPin = new CTempoChangeInputPin(this, pHR);
 	if(m_pInputPin == 0) 
 	{
@@ -215,21 +210,6 @@ STDMETHODIMP CTempoChangeFilter::SetTempoDelta(float newTempoDelta)
 	return S_OK;
 }
 
-//-------------------------------------------------------------------------------------------
-// SetQueueOutput - default = FALSE - don't queue, must be called while Stopped().
-//					Reconnects output pin.
-//-------------------------------------------------------------------------------------------
-STDMETHODIMP CTempoChangeFilter::SetQueueOutput(BOOL queueOutput, DWORD threadPriority, LONG queueLength)
-{
-	CAutoLock lock(&m_lock);
-	DbgLog((LOG_TRACE, 1, TEXT("CTempoChangeFilter::SetQueueOutput %d"), queueOutput));
-	m_queueOutput = queueOutput;
-	//m_queueOutput = FALSE;	//***DEBUG***
-	m_queueThreadPriority = threadPriority;
-	m_queueLength = queueLength;
-	HR_BAIL(Reconnect());
-	return S_OK;
-}
 
 
 //-------------------------------------------------------------------------------------------

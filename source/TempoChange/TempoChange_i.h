@@ -2,7 +2,7 @@
 
 
 /* File created by MIDL compiler version 5.01.0164 */
-/* at Mon Apr 04 18:20:00 2005
+/* at Tue Apr 05 11:55:36 2005
  */
 /* Compiler settings for C:\HD\RTPipe\SoundTouch\source\TempoChange\TempoChange.idl:
     Os (OptLev=s), W1, Zp8, env=Win32, ms_ext, c_ext
@@ -79,11 +79,6 @@ EXTERN_C const IID IID_ICFTempoChangeStats;
         virtual HRESULT STDMETHODCALLTYPE SetTempoDelta( 
             /* [in] */ float newTempoDeltas) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE SetQueueOutput( 
-            /* [in] */ BOOL queueOutput,
-            /* [in] */ DWORD threadPriority,
-            /* [in] */ LONG queueLength) = 0;
-        
     };
     
 #else 	/* C style interface */
@@ -106,12 +101,6 @@ EXTERN_C const IID IID_ICFTempoChangeStats;
         HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetTempoDelta )( 
             ICFTempoChangeStats __RPC_FAR * This,
             /* [in] */ float newTempoDeltas);
-        
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetQueueOutput )( 
-            ICFTempoChangeStats __RPC_FAR * This,
-            /* [in] */ BOOL queueOutput,
-            /* [in] */ DWORD threadPriority,
-            /* [in] */ LONG queueLength);
         
         END_INTERFACE
     } ICFTempoChangeStatsVtbl;
@@ -139,9 +128,6 @@ EXTERN_C const IID IID_ICFTempoChangeStats;
 #define ICFTempoChangeStats_SetTempoDelta(This,newTempoDeltas)	\
     (This)->lpVtbl -> SetTempoDelta(This,newTempoDeltas)
 
-#define ICFTempoChangeStats_SetQueueOutput(This,queueOutput,threadPriority,queueLength)	\
-    (This)->lpVtbl -> SetQueueOutput(This,queueOutput,threadPriority,queueLength)
-
 #endif /* COBJMACROS */
 
 
@@ -155,20 +141,6 @@ HRESULT STDMETHODCALLTYPE ICFTempoChangeStats_SetTempoDelta_Proxy(
 
 
 void __RPC_STUB ICFTempoChangeStats_SetTempoDelta_Stub(
-    IRpcStubBuffer *This,
-    IRpcChannelBuffer *_pRpcChannelBuffer,
-    PRPC_MESSAGE _pRpcMessage,
-    DWORD *_pdwStubPhase);
-
-
-HRESULT STDMETHODCALLTYPE ICFTempoChangeStats_SetQueueOutput_Proxy( 
-    ICFTempoChangeStats __RPC_FAR * This,
-    /* [in] */ BOOL queueOutput,
-    /* [in] */ DWORD threadPriority,
-    /* [in] */ LONG queueLength);
-
-
-void __RPC_STUB ICFTempoChangeStats_SetQueueOutput_Stub(
     IRpcStubBuffer *This,
     IRpcChannelBuffer *_pRpcChannelBuffer,
     PRPC_MESSAGE _pRpcMessage,

@@ -10,8 +10,6 @@
 
 #define PIN_NAME	NAME("CFTempoChange_OutputPin")
 
-#define RETRY_IF_ALLOCATION_FAILS
-
 //-------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------
 CTempoChangeOutputPin::CTempoChangeOutputPin(CTempoChangeFilter* pFilter, HRESULT* pHR) :
@@ -80,13 +78,6 @@ HRESULT CTempoChangeOutputPin::DecideBufferSize(IMemAllocator * pAlloc,
 	SET_IF_LESS(pProps, inputProps, cbAlign);
 
 	CTempoChangeFilter* pFilter = (CTempoChangeFilter*)m_pFilter;
-	if(pFilter->m_queueOutput)
-	{
-		if(pProps->cBuffers < pFilter->m_queueLength)
-		{
-			pProps->cBuffers = pFilter->m_queueLength;
-		}
-	}
 	
 	ALLOCATOR_PROPERTIES actualProps;
 	HRESULT hr = pAlloc->SetProperties(pProps, &actualProps);
@@ -152,24 +143,6 @@ STDMETHODIMP CTempoChangeOutputPin::Notify(IBaseFilter* pSender, Quality q)
 STDMETHODIMP CTempoChangeOutputPin::QueryAccept(const AM_MEDIA_TYPE* pMT)
 {
 	HRESULT hr = CBaseOutputPin::QueryAccept(pMT);
-/*	if(hr == S_OK)
-	{
-		if(pMT->formattype == FORMAT_VideoInfo)
-		{
-			VIDEOINFOHEADER* pHdr = (VIDEOINFOHEADER*)pMT->pbFormat;
-			m_outputWidth = pHdr->bmiHeader.biWidth;
-			m_outputHeight = pHdr->bmiHeader.biHeight;
-		//	DbgLog((LOG_TRACE, 1, TEXT("CTempoChangeOutputPin::QueryAccept() - VI - m_outputWidth = %d, m_outputHeight = %d"), m_outputWidth, m_outputHeight));
-		}
-		else if(pMT->formattype == FORMAT_VideoInfo2)
-		{
-			VIDEOINFOHEADER2* pHdr = (VIDEOINFOHEADER2*)pMT->pbFormat;
-			m_outputWidth = pHdr->bmiHeader.biWidth;
-			m_outputHeight = pHdr->bmiHeader.biHeight;
-		//	DbgLog((LOG_TRACE, 1, TEXT("CTempoChangeOutputPin::QueryAccept() - VI2 - m_outputWidth = %d, m_outputHeight = %d"), m_outputWidth, m_outputHeight));
-		}
-	}*/
-
 	return hr;
 }
 
@@ -183,65 +156,8 @@ HRESULT CTempoChangeOutputPin::Active()
 
     if(m_Connected == 0) return S_OK;
 
-TryAgain:	
 	CTempoChangeFilter* pFilter = (CTempoChangeFilter*)m_pFilter;
-
-	hr = S_OK;
-
-	if(pFilter->m_queueOutput)
-	{  
-		if(m_pOutputQueue == 0)
-		{
-			DbgLog((LOG_TRACE, 1, TEXT("CTempoChangeOutputPin::Active: Creating output queue length: %d"),
-					pFilter->m_queueLength));
-
-			// create output queue
-			m_pOutputQueue = new CSROutputQueue(m_Connected, &hr, 
-				pFilter->m_queueThreadPriority, pFilter->m_queueLength);
-			if(m_pOutputQueue == 0) HR_BAIL(E_OUTOFMEMORY);
-
-			if(FAILED(hr))
-			{
-				delete m_pOutputQueue;
-				m_pOutputQueue = 0;
-				HR_BAIL(hr);
-			}
-		}
-    }
-
     hr = CBaseOutputPin::Active();
-
-#ifdef RETRY_IF_ALLOCATION_FAILS
-	if(hr != S_OK)
-	{
-		// Try allocating a smaller number of buffers.
-		pFilter->m_queueLength *= 3;
-		pFilter->m_queueLength /= 4;
-
-		//Try allocating again if there are a reason number of buffers to try for.
-		if(pFilter->m_queueLength < 10) 
-			HR_BAIL(hr);
-
-		//Reduce the number of buffers in the Properties
-		IMemAllocator* pOutputAlloc = ((CTempoChangeFilter*)m_pFilter)->m_pOutputPin->GetAllocator();
-		
-		ALLOCATOR_PROPERTIES outputProps;
-
-		pOutputAlloc->GetProperties(&outputProps);
-		outputProps.cBuffers = pFilter->m_queueLength;
-	
-		ALLOCATOR_PROPERTIES actualProps;
-		HRESULT hr = pOutputAlloc->SetProperties(&outputProps, &actualProps);
-
-
-		// Delete the old failed queue
-		delete m_pOutputQueue;
-		m_pOutputQueue = 0;
-
-		goto TryAgain;
-	}
-#endif
-
     return S_OK;
 }
 

@@ -2,7 +2,7 @@
 
 
 /* File created by MIDL compiler version 5.01.0164 */
-/* at Mon Apr 04 18:20:00 2005
+/* at Tue Apr 05 11:55:36 2005
  */
 /* Compiler settings for C:\HD\RTPipe\SoundTouch\source\TempoChange\TempoChange.idl:
     Os (OptLev=s), W1, Zp8, env=Win32, ms_ext, c_ext
@@ -26,7 +26,7 @@
 #include "TempoChange_i.h"
 
 #define TYPE_FORMAT_STRING_SIZE   3                                 
-#define PROC_FORMAT_STRING_SIZE   13                                
+#define PROC_FORMAT_STRING_SIZE   5                                 
 
 typedef struct _MIDL_TYPE_FORMAT_STRING
     {
@@ -154,118 +154,6 @@ NdrStubInitialize(
 }
 
 
-HRESULT STDMETHODCALLTYPE ICFTempoChangeStats_SetQueueOutput_Proxy( 
-    ICFTempoChangeStats __RPC_FAR * This,
-    /* [in] */ BOOL queueOutput,
-    /* [in] */ DWORD threadPriority,
-    /* [in] */ LONG queueLength)
-{
-
-    HRESULT _RetVal;
-    
-    RPC_MESSAGE _RpcMessage;
-    
-    MIDL_STUB_MESSAGE _StubMsg;
-    
-    RpcTryExcept
-        {
-        NdrProxyInitialize(
-                      ( void __RPC_FAR *  )This,
-                      ( PRPC_MESSAGE  )&_RpcMessage,
-                      ( PMIDL_STUB_MESSAGE  )&_StubMsg,
-                      ( PMIDL_STUB_DESC  )&Object_StubDesc,
-                      4);
-        
-        
-        
-        RpcTryFinally
-            {
-            
-            _StubMsg.BufferLength = 4U + 4U + 4U;
-            NdrProxyGetBuffer(This, &_StubMsg);
-            *(( BOOL __RPC_FAR * )_StubMsg.Buffer)++ = queueOutput;
-            
-            *(( DWORD __RPC_FAR * )_StubMsg.Buffer)++ = threadPriority;
-            
-            *(( LONG __RPC_FAR * )_StubMsg.Buffer)++ = queueLength;
-            
-            NdrProxySendReceive(This, &_StubMsg);
-            
-            if ( (_RpcMessage.DataRepresentation & 0X0000FFFFUL) != NDR_LOCAL_DATA_REPRESENTATION )
-                NdrConvert( (PMIDL_STUB_MESSAGE) &_StubMsg, (PFORMAT_STRING) &__MIDL_ProcFormatString.Format[4] );
-            
-            _RetVal = *(( HRESULT __RPC_FAR * )_StubMsg.Buffer)++;
-            
-            }
-        RpcFinally
-            {
-            NdrProxyFreeBuffer(This, &_StubMsg);
-            
-            }
-        RpcEndFinally
-        
-        }
-    RpcExcept(_StubMsg.dwStubPhase != PROXY_SENDRECEIVE)
-        {
-        _RetVal = NdrProxyErrorHandler(RpcExceptionCode());
-        }
-    RpcEndExcept
-    return _RetVal;
-}
-
-void __RPC_STUB ICFTempoChangeStats_SetQueueOutput_Stub(
-    IRpcStubBuffer *This,
-    IRpcChannelBuffer *_pRpcChannelBuffer,
-    PRPC_MESSAGE _pRpcMessage,
-    DWORD *_pdwStubPhase)
-{
-    HRESULT _RetVal;
-    MIDL_STUB_MESSAGE _StubMsg;
-    LONG queueLength;
-    BOOL queueOutput;
-    DWORD threadPriority;
-    
-NdrStubInitialize(
-                     _pRpcMessage,
-                     &_StubMsg,
-                     &Object_StubDesc,
-                     _pRpcChannelBuffer);
-    RpcTryFinally
-        {
-        if ( (_pRpcMessage->DataRepresentation & 0X0000FFFFUL) != NDR_LOCAL_DATA_REPRESENTATION )
-            NdrConvert( (PMIDL_STUB_MESSAGE) &_StubMsg, (PFORMAT_STRING) &__MIDL_ProcFormatString.Format[4] );
-        
-        queueOutput = *(( BOOL __RPC_FAR * )_StubMsg.Buffer)++;
-        
-        threadPriority = *(( DWORD __RPC_FAR * )_StubMsg.Buffer)++;
-        
-        queueLength = *(( LONG __RPC_FAR * )_StubMsg.Buffer)++;
-        
-        
-        *_pdwStubPhase = STUB_CALL_SERVER;
-        _RetVal = (((ICFTempoChangeStats*) ((CStdStubBuffer *)This)->pvServerObject)->lpVtbl) -> SetQueueOutput(
-                  (ICFTempoChangeStats *) ((CStdStubBuffer *)This)->pvServerObject,
-                  queueOutput,
-                  threadPriority,
-                  queueLength);
-        
-        *_pdwStubPhase = STUB_MARSHAL;
-        
-        _StubMsg.BufferLength = 4U;
-        NdrStubGetBuffer(This, _pRpcChannelBuffer, &_StubMsg);
-        *(( HRESULT __RPC_FAR * )_StubMsg.Buffer)++ = _RetVal;
-        
-        }
-    RpcFinally
-        {
-        }
-    RpcEndFinally
-    _pRpcMessage->BufferLength = 
-        (unsigned int)((long)_StubMsg.Buffer - (long)_pRpcMessage->Buffer);
-    
-}
-
-
 static const MIDL_STUB_DESC Object_StubDesc = 
     {
     0,
@@ -290,28 +178,26 @@ static const MIDL_STUB_DESC Object_StubDesc =
     0   /* Reserved5 */
     };
 
-const CINTERFACE_PROXY_VTABLE(5) _ICFTempoChangeStatsProxyVtbl = 
+const CINTERFACE_PROXY_VTABLE(4) _ICFTempoChangeStatsProxyVtbl = 
 {
     &IID_ICFTempoChangeStats,
     IUnknown_QueryInterface_Proxy,
     IUnknown_AddRef_Proxy,
     IUnknown_Release_Proxy ,
-    ICFTempoChangeStats_SetTempoDelta_Proxy ,
-    ICFTempoChangeStats_SetQueueOutput_Proxy
+    ICFTempoChangeStats_SetTempoDelta_Proxy
 };
 
 
 static const PRPC_STUB_FUNCTION ICFTempoChangeStats_table[] =
 {
-    ICFTempoChangeStats_SetTempoDelta_Stub,
-    ICFTempoChangeStats_SetQueueOutput_Stub
+    ICFTempoChangeStats_SetTempoDelta_Stub
 };
 
 const CInterfaceStubVtbl _ICFTempoChangeStatsStubVtbl =
 {
     &IID_ICFTempoChangeStats,
     0,
-    5,
+    4,
     &ICFTempoChangeStats_table[-3],
     CStdStubBuffer_METHODS
 };
@@ -329,14 +215,6 @@ static const MIDL_PROC_FORMAT_STRING __MIDL_ProcFormatString =
 			0x4e,		/* FC_IN_PARAM_BASETYPE */
 			0xa,		/* FC_FLOAT */
 /*  2 */	0x53,		/* FC_RETURN_PARAM_BASETYPE */
-			0x8,		/* FC_LONG */
-/*  4 */	0x4e,		/* FC_IN_PARAM_BASETYPE */
-			0x8,		/* FC_LONG */
-/*  6 */	0x4e,		/* FC_IN_PARAM_BASETYPE */
-			0x8,		/* FC_LONG */
-/*  8 */	0x4e,		/* FC_IN_PARAM_BASETYPE */
-			0x8,		/* FC_LONG */
-/* 10 */	0x53,		/* FC_RETURN_PARAM_BASETYPE */
 			0x8,		/* FC_LONG */
 
 			0x0

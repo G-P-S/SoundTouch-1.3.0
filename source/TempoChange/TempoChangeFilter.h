@@ -53,7 +53,6 @@ public:
 
 public:	// ICFTempoChangeStats
 	STDMETHODIMP SetTempoDelta(float newTempoDelta);
-	STDMETHODIMP SetQueueOutput(BOOL queueOutput, DWORD threadPriority, LONG queueLength);
 
 public:
 	CCritSec				m_lock;
@@ -68,9 +67,5 @@ public:
 	LONGLONG	m_lastVideoMediaTime;
 	REFERENCE_TIME m_lastRefTime;
 	REFERENCE_TIME m_lastVideoRefTime;
-
-	BOOL		m_queueOutput;
-	DWORD		m_queueThreadPriority;
-	DWORD		m_queueLength;
 };
 
