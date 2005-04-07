@@ -348,7 +348,7 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 	DWORD outputlength = pOutputSample->GetActualDataLength();
 	CTempoChangeFilter* pFilter = (CTempoChangeFilter*)m_pFilter;
 
-	if(pFilter->m_TempoDelta)
+	if(pFilter->m_TempoDelta || pFilter->m_RateDelta)
 	{
 		int returnedsamples = 0;
 		DWORD avgframetime = 0;

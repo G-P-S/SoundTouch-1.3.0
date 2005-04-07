@@ -53,6 +53,7 @@ public:
 
 public:	// ICFTempoChangeStats
 	STDMETHODIMP SetTempoDelta(float newTempoDelta);
+	STDMETHODIMP SetRateDelta(float newRateDelta);
 
 public:
 	CCritSec				m_lock;
@@ -62,6 +63,7 @@ public:
 
 public:
 	float		m_TempoDelta;
+	float		m_RateDelta;
     SoundTouch	m_SoundTouch;
 	LONGLONG	m_lastMediaTime;
 	LONGLONG	m_lastVideoMediaTime;

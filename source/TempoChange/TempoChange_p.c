@@ -2,7 +2,7 @@
 
 
 /* File created by MIDL compiler version 5.01.0164 */
-/* at Tue Apr 05 11:59:44 2005
+/* at Thu Apr 07 12:55:38 2005
  */
 /* Compiler settings for C:\HD\RTPipe\SoundTouch\source\TempoChange\TempoChange.idl:
     Os (OptLev=s), W1, Zp8, env=Win32, ms_ext, c_ext
@@ -154,6 +154,102 @@ NdrStubInitialize(
 }
 
 
+HRESULT STDMETHODCALLTYPE ICFTempoChangeStats_SetRateDelta_Proxy( 
+    ICFTempoChangeStats __RPC_FAR * This,
+    /* [in] */ float newRateDeltas)
+{
+
+    HRESULT _RetVal;
+    
+    RPC_MESSAGE _RpcMessage;
+    
+    MIDL_STUB_MESSAGE _StubMsg;
+    
+    RpcTryExcept
+        {
+        NdrProxyInitialize(
+                      ( void __RPC_FAR *  )This,
+                      ( PRPC_MESSAGE  )&_RpcMessage,
+                      ( PMIDL_STUB_MESSAGE  )&_StubMsg,
+                      ( PMIDL_STUB_DESC  )&Object_StubDesc,
+                      4);
+        
+        
+        
+        RpcTryFinally
+            {
+            
+            _StubMsg.BufferLength = 4U;
+            NdrProxyGetBuffer(This, &_StubMsg);
+            *(( float __RPC_FAR * )_StubMsg.Buffer)++ = newRateDeltas;
+            
+            NdrProxySendReceive(This, &_StubMsg);
+            
+            if ( (_RpcMessage.DataRepresentation & 0X0000FFFFUL) != NDR_LOCAL_DATA_REPRESENTATION )
+                NdrConvert( (PMIDL_STUB_MESSAGE) &_StubMsg, (PFORMAT_STRING) &__MIDL_ProcFormatString.Format[0] );
+            
+            _RetVal = *(( HRESULT __RPC_FAR * )_StubMsg.Buffer)++;
+            
+            }
+        RpcFinally
+            {
+            NdrProxyFreeBuffer(This, &_StubMsg);
+            
+            }
+        RpcEndFinally
+        
+        }
+    RpcExcept(_StubMsg.dwStubPhase != PROXY_SENDRECEIVE)
+        {
+        _RetVal = NdrProxyErrorHandler(RpcExceptionCode());
+        }
+    RpcEndExcept
+    return _RetVal;
+}
+
+void __RPC_STUB ICFTempoChangeStats_SetRateDelta_Stub(
+    IRpcStubBuffer *This,
+    IRpcChannelBuffer *_pRpcChannelBuffer,
+    PRPC_MESSAGE _pRpcMessage,
+    DWORD *_pdwStubPhase)
+{
+    HRESULT _RetVal;
+    MIDL_STUB_MESSAGE _StubMsg;
+    float newRateDeltas;
+    
+NdrStubInitialize(
+                     _pRpcMessage,
+                     &_StubMsg,
+                     &Object_StubDesc,
+                     _pRpcChannelBuffer);
+    RpcTryFinally
+        {
+        if ( (_pRpcMessage->DataRepresentation & 0X0000FFFFUL) != NDR_LOCAL_DATA_REPRESENTATION )
+            NdrConvert( (PMIDL_STUB_MESSAGE) &_StubMsg, (PFORMAT_STRING) &__MIDL_ProcFormatString.Format[0] );
+        
+        newRateDeltas = *(( float __RPC_FAR * )_StubMsg.Buffer)++;
+        
+        
+        *_pdwStubPhase = STUB_CALL_SERVER;
+        _RetVal = (((ICFTempoChangeStats*) ((CStdStubBuffer *)This)->pvServerObject)->lpVtbl) -> SetRateDelta((ICFTempoChangeStats *) ((CStdStubBuffer *)This)->pvServerObject,newRateDeltas);
+        
+        *_pdwStubPhase = STUB_MARSHAL;
+        
+        _StubMsg.BufferLength = 4U;
+        NdrStubGetBuffer(This, _pRpcChannelBuffer, &_StubMsg);
+        *(( HRESULT __RPC_FAR * )_StubMsg.Buffer)++ = _RetVal;
+        
+        }
+    RpcFinally
+        {
+        }
+    RpcEndFinally
+    _pRpcMessage->BufferLength = 
+        (unsigned int)((long)_StubMsg.Buffer - (long)_pRpcMessage->Buffer);
+    
+}
+
+
 static const MIDL_STUB_DESC Object_StubDesc = 
     {
     0,
@@ -178,26 +274,28 @@ static const MIDL_STUB_DESC Object_StubDesc =
     0   /* Reserved5 */
     };
 
-const CINTERFACE_PROXY_VTABLE(4) _ICFTempoChangeStatsProxyVtbl = 
+const CINTERFACE_PROXY_VTABLE(5) _ICFTempoChangeStatsProxyVtbl = 
 {
     &IID_ICFTempoChangeStats,
     IUnknown_QueryInterface_Proxy,
     IUnknown_AddRef_Proxy,
     IUnknown_Release_Proxy ,
-    ICFTempoChangeStats_SetTempoDelta_Proxy
+    ICFTempoChangeStats_SetTempoDelta_Proxy ,
+    ICFTempoChangeStats_SetRateDelta_Proxy
 };
 
 
 static const PRPC_STUB_FUNCTION ICFTempoChangeStats_table[] =
 {
-    ICFTempoChangeStats_SetTempoDelta_Stub
+    ICFTempoChangeStats_SetTempoDelta_Stub,
+    ICFTempoChangeStats_SetRateDelta_Stub
 };
 
 const CInterfaceStubVtbl _ICFTempoChangeStatsStubVtbl =
 {
     &IID_ICFTempoChangeStats,
     0,
-    4,
+    5,
     &ICFTempoChangeStats_table[-3],
     CStdStubBuffer_METHODS
 };

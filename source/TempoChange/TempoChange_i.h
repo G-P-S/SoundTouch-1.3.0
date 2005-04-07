@@ -2,7 +2,7 @@
 
 
 /* File created by MIDL compiler version 5.01.0164 */
-/* at Tue Apr 05 11:59:44 2005
+/* at Thu Apr 07 12:55:38 2005
  */
 /* Compiler settings for C:\HD\RTPipe\SoundTouch\source\TempoChange\TempoChange.idl:
     Os (OptLev=s), W1, Zp8, env=Win32, ms_ext, c_ext
@@ -79,6 +79,9 @@ EXTERN_C const IID IID_ICFTempoChangeStats;
         virtual HRESULT STDMETHODCALLTYPE SetTempoDelta( 
             /* [in] */ float newTempoDeltas) = 0;
         
+        virtual HRESULT STDMETHODCALLTYPE SetRateDelta( 
+            /* [in] */ float newRateDeltas) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -101,6 +104,10 @@ EXTERN_C const IID IID_ICFTempoChangeStats;
         HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetTempoDelta )( 
             ICFTempoChangeStats __RPC_FAR * This,
             /* [in] */ float newTempoDeltas);
+        
+        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetRateDelta )( 
+            ICFTempoChangeStats __RPC_FAR * This,
+            /* [in] */ float newRateDeltas);
         
         END_INTERFACE
     } ICFTempoChangeStatsVtbl;
@@ -128,6 +135,9 @@ EXTERN_C const IID IID_ICFTempoChangeStats;
 #define ICFTempoChangeStats_SetTempoDelta(This,newTempoDeltas)	\
     (This)->lpVtbl -> SetTempoDelta(This,newTempoDeltas)
 
+#define ICFTempoChangeStats_SetRateDelta(This,newRateDeltas)	\
+    (This)->lpVtbl -> SetRateDelta(This,newRateDeltas)
+
 #endif /* COBJMACROS */
 
 
@@ -141,6 +151,18 @@ HRESULT STDMETHODCALLTYPE ICFTempoChangeStats_SetTempoDelta_Proxy(
 
 
 void __RPC_STUB ICFTempoChangeStats_SetTempoDelta_Stub(
+    IRpcStubBuffer *This,
+    IRpcChannelBuffer *_pRpcChannelBuffer,
+    PRPC_MESSAGE _pRpcMessage,
+    DWORD *_pdwStubPhase);
+
+
+HRESULT STDMETHODCALLTYPE ICFTempoChangeStats_SetRateDelta_Proxy( 
+    ICFTempoChangeStats __RPC_FAR * This,
+    /* [in] */ float newRateDeltas);
+
+
+void __RPC_STUB ICFTempoChangeStats_SetRateDelta_Stub(
     IRpcStubBuffer *This,
     IRpcChannelBuffer *_pRpcChannelBuffer,
     PRPC_MESSAGE _pRpcMessage,

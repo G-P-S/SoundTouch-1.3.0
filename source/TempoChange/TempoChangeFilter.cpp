@@ -207,6 +207,16 @@ STDMETHODIMP CTempoChangeFilter::SetTempoDelta(float newTempoDelta)
 {
 	CAutoLock lock(&m_lock);
 	m_TempoDelta = newTempoDelta;
+	m_SoundTouch.setTempoChange(m_TempoDelta);
+	return S_OK;
+}
+//-------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------
+STDMETHODIMP CTempoChangeFilter::SetRateDelta(float newRateDelta)
+{
+	CAutoLock lock(&m_lock);
+	m_RateDelta = newRateDelta;
+	m_SoundTouch.setRateChange(m_RateDelta);
 	return S_OK;
 }
 
