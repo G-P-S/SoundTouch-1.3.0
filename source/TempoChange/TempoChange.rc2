@@ -16,8 +16,8 @@
 // Version
 //
 
-#include "../Common/CineForm.h"
-#include "../Common/DelMar.h"
+#include "../../../Common/CineForm.h"
+#include "../../../Common/DelMar.h"
 #include "ver.h"
 
 VS_VERSION_INFO VERSIONINFO
