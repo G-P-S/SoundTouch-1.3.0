@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=xilink6.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /machine:I386
-# ADD LINK32 strmbase.lib msvcrt.lib quartz.lib vfw32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib SoundTouch.lib bpm.lib /nologo /stack:0x200000,0x200000 /entry:"DllEntryPoint@12" /subsystem:windows /dll /map /machine:I386 /nodefaultlib /out:"../../../Apps/Bin/Release/CFTempoChange.ax" /libpath:"..\..\lib"
+# ADD LINK32 strmbase.lib msvcrt.lib quartz.lib vfw32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib SoundTouch.lib bpm.lib /nologo /stack:0x200000,0x200000 /entry:"DllEntryPoint@12" /subsystem:windows /dll /map /machine:I386 /nodefaultlib /out:"../../../../Apps/Bin/Release/CFTempoChange.ax" /libpath:"..\..\lib"
 # Begin Custom Build - Registering DirectShow filter $(TargetPath)
 OutDir=.\Release
 TargetPath=\HD\RTPipe\Apps\Bin\Release\CFTempoChange.ax
@@ -91,7 +91,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=xilink6.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 strmbasd.lib msvcrtd.lib quartz.lib vfw32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib SoundTouchD.lib bpmD.lib /nologo /stack:0x200000,0x200000 /entry:"DllEntryPoint@12" /subsystem:windows /dll /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib /out:"../../../Apps/Bin/Debug/CFTempoChange.ax" /pdbtype:sept /libpath:"..\..\lib"
+# ADD LINK32 strmbasd.lib msvcrtd.lib quartz.lib vfw32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib SoundTouchD.lib bpmD.lib /nologo /stack:0x200000,0x200000 /entry:"DllEntryPoint@12" /subsystem:windows /dll /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib /out:"../../../../Apps/Bin/Debug/CFTempoChange.ax" /pdbtype:sept /libpath:"..\..\lib"
 # Begin Custom Build - Registering DirectShow filter $(TargetPath)
 OutDir=.\Debug
 TargetPath=\HD\RTPipe\Apps\Bin\Debug\CFTempoChange.ax
