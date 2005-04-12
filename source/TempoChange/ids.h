@@ -3,6 +3,9 @@
 //-------------------------------------------------------------------------------------------
 #pragma once
 
+#include "../../../Common/DelMar.h"
+#include "../../../Common/CineFormGUIDs.h"
+
 // {0BD8F1CE-5F36-4a2b-B8E6-B3466F8EF8C2}
 
 DEFINE_GUID(CLSID_CFTempoChange, 
