@@ -27,7 +27,7 @@ public:
 	STDMETHODIMP Notify(IBaseFilter* pSender, Quality q);
 
 	HRESULT InitializeOutputSample(IMediaSample *pSample, IMediaSample **ppOutSample);
-	HRESULT CopyInputSampleToOutputSample(IMediaSample* pInputSample, IMediaSample** ppOutputSample);
+	HRESULT CopyInputSampleToOutputSample(IMediaSample* pInputSample, IMediaSample** ppOutputSample, bool *deliversample);
 
 	IPin*			GetConnectedPin() { return m_Connected; }
 	IMemAllocator*	Allocator() { return m_pAllocator; }

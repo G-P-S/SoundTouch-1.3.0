@@ -107,6 +107,8 @@ CUnknown * WINAPI CTempoChangeFilter::CreateInstance(LPUNKNOWN punk, HRESULT *ph
 CTempoChangeFilter::CTempoChangeFilter(IUnknown* pUnknown, HRESULT* pHR) :
 	CBaseFilter(NAME("CFTempoChange"), pUnknown, &m_lock, CLSID_CFTempoChange)
 {
+	m_remove_pulldown = false;//true;
+	m_pulldown_framecount = 0;
 	m_TempoDelta = 0.0; // -4.0
 	m_lastMediaTime = 0;
 	m_lastVideoMediaTime = 0;

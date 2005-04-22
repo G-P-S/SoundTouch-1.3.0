@@ -134,8 +134,12 @@ HRESULT CTempoChangeInputPin::Receive(IMediaSample* pSample)
 	// TODO: make copy of sample for avi mux ... needs copy for alignment padding?
 #ifdef COPY_SAMPLES
 	CComPtr<IMediaSample> outputSample;
-	HR_BAIL(CopyInputSampleToOutputSample(pSample, &outputSample));
-	HR_BAIL(pFilter->m_pOutputPin->Deliver(outputSample));
+	bool deliversample = true;
+	HR_BAIL(CopyInputSampleToOutputSample(pSample, &outputSample, &deliversample));
+	if(deliversample)
+	{
+		HR_BAIL(pFilter->m_pOutputPin->Deliver(outputSample));
+	}
 #else
 	HR_BAIL(pFilter->m_pOutputPin->Deliver(pSample));
 #endif
@@ -335,27 +339,27 @@ BOOL GetType(const CMediaType& mt, DWORD &avgframetime )
 //-------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------
 HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInputSample, 
-														 IMediaSample** ppOutputSample)
+														 IMediaSample** ppOutputSample, bool *deliversample)
 {
-	HR_BAIL(InitializeOutputSample(pInputSample, ppOutputSample));
-
 	// Copy input buffer to output buffer
-	IMediaSample* pOutputSample = *ppOutputSample;
 	BYTE* pIn = 0, *pOut = 0;
 	HR_BAIL(pInputSample->GetPointer(&pIn));
-	HR_BAIL(pOutputSample->GetPointer(&pOut));
 	DWORD length = pInputSample->GetActualDataLength();
-	DWORD outputlength = pOutputSample->GetActualDataLength();
 	CTempoChangeFilter* pFilter = (CTempoChangeFilter*)m_pFilter;
 
-	if(pFilter->m_TempoDelta || pFilter->m_RateDelta)
+	if(pFilter->m_TempoDelta || pFilter->m_RateDelta || pFilter->m_remove_pulldown)
 	{
 		int returnedsamples = 0;
 		DWORD avgframetime = 0;
 		bool  IsAudio = GetType(m_mt, avgframetime);
 
-		if(IsAudio)
+		if(IsAudio && (pFilter->m_TempoDelta || pFilter->m_RateDelta))
 		{
+			HR_BAIL(InitializeOutputSample(pInputSample, ppOutputSample));	
+			IMediaSample* pOutputSample = *ppOutputSample;
+			HR_BAIL(pOutputSample->GetPointer(&pOut));
+
+
 			pFilter->m_SoundTouch.putSamples((SAMPLETYPE *)pIn, length / 4);
 
 			returnedsamples = pFilter->m_SoundTouch.receiveSamples((SAMPLETYPE *)pOut, 32768);
@@ -409,10 +413,28 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 		}
 		else
 		{
-			HR_BAIL(pOutputSample->SetActualDataLength(length));
-			CopyMemory(pOut, pIn, length);
 
 			avgframetime = (DWORD)((double)avgframetime / (100.0 + pFilter->m_TempoDelta) * 100);
+
+			if(pFilter->m_remove_pulldown)
+			{
+				avgframetime *= 30;
+				avgframetime /= 24;
+				pFilter->m_pulldown_framecount++;
+				if(pFilter->m_pulldown_framecount > 4)
+				{
+					pFilter->m_pulldown_framecount = 0;
+					deliversample = false;	
+					return S_OK;
+				}
+			}
+
+
+			HR_BAIL(InitializeOutputSample(pInputSample, ppOutputSample));
+			IMediaSample* pOutputSample = *ppOutputSample;
+			HR_BAIL(pOutputSample->GetPointer(&pOut));
+			HR_BAIL(pOutputSample->SetActualDataLength(length));
+			CopyMemory(pOut, pIn, length);
 
 
 			IMediaSample2 *pOutSample2;
@@ -462,6 +484,9 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 	}
 	else
 	{
+		HR_BAIL(InitializeOutputSample(pInputSample, ppOutputSample));
+		IMediaSample* pOutputSample = *ppOutputSample;
+		HR_BAIL(pOutputSample->GetPointer(&pOut));
 		HR_BAIL(pOutputSample->SetActualDataLength(length));
 		CopyMemory(pOut, pIn, length);
 	}

@@ -64,6 +64,10 @@ public:
 public:
 	float		m_TempoDelta;
 	float		m_RateDelta;
+
+	bool		m_remove_pulldown;
+	int			m_pulldown_framecount;
+
     SoundTouch	m_SoundTouch;
 	LONGLONG	m_lastMediaTime;
 	LONGLONG	m_lastVideoMediaTime;
