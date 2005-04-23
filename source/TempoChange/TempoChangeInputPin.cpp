@@ -413,6 +413,7 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 		}
 		else
 		{
+			bool mixframebuffers = false;
 
 			avgframetime = (DWORD)((double)avgframetime / (100.0 + pFilter->m_TempoDelta) * 100);
 
@@ -420,12 +421,97 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 			{
 				avgframetime *= 30;
 				avgframetime /= 24;
-				pFilter->m_pulldown_framecount++;
+
 				if(pFilter->m_pulldown_framecount > 4)
 				{
 					pFilter->m_pulldown_framecount = 0;
-					deliversample = false;	
+				}
+
+
+				if(pFilter->m_pulldown_structure_found == false)
+				{
+					int width = 0;
+					int bpp = 0;
+					int height = 0;
+					int field_total = 0;
+					int frame_total = 0;
+
+					if(ExtractFrameSize(m_mt, width, height, bpp))
+					{
+						if(height > 0)
+						{
+							int x,y;
+							int stride = length / height;
+							int columns = 0;
+
+							for(x=0; x<stride; x+=2)
+							{	
+								pFilter->field_total = 0;
+								pFilter->frame_total = 0;
+								
+						/*		for(y=10; y<height-10; y+=2)
+								{
+									pFilter->field_total += abs(pIn[y*stride+x] - pIn[(y+2)*stride+x]);
+									pFilter->field_total += abs(pIn[(y+1)*stride+x] - pIn[(y+3)*stride+x]);
+
+									pFilter->frame_total += abs(pIn[y*stride+x] - pIn[(y+1)*stride+x]);
+									pFilter->frame_total += abs(pIn[(y+1)*stride+x] - pIn[(y+2)*stride+x]);
+									pFilter->frame_total += abs(pIn[(y+2)*stride+x] - pIn[(y+3)*stride+x]);
+								}
+
+								if(pFilter->frame_total > pFilter->field_total*5) // x 4 seem to the stop false positives.
+						*/		for(y=10; y<height-10; y+=2)
+								{
+									pFilter->field_total += (double)((pIn[(y+0)*stride+x] - pIn[(y+2)*stride+x]) * (pIn[(y+0)*stride+x] - pIn[(y+2)*stride+x]));
+									pFilter->field_total += (double)((pIn[(y+1)*stride+x] - pIn[(y+3)*stride+x]) * (pIn[(y+1)*stride+x] - pIn[(y+3)*stride+x]));
+
+									pFilter->frame_total += (double)((pIn[(y+0)*stride+x] - pIn[(y+1)*stride+x]) * (pIn[(y+0)*stride+x] - pIn[(y+1)*stride+x]));
+									pFilter->frame_total += (double)((pIn[(y+1)*stride+x] - pIn[(y+2)*stride+x]) * (pIn[(y+1)*stride+x] - pIn[(y+2)*stride+x]));
+									pFilter->frame_total += (double)((pIn[(y+2)*stride+x] - pIn[(y+3)*stride+x]) * (pIn[(y+2)*stride+x] - pIn[(y+3)*stride+x]));
+								}
+
+								if(pFilter->field_total > height*10 && pFilter->frame_total > pFilter->field_total*2.0) // x 4 seem to the stop false positives.
+								{
+									columns++;
+									if(columns > 10)
+									{
+										pFilter->m_pulldown_structure_found = true;
+										pFilter->m_pulldown_framecount = 1; // discard this frame
+										break;
+									}
+								}
+								
+						
+							}					
+						}
+					}
+				}
+
+				switch(pFilter->m_pulldown_framecount)
+				{
+				case 0:
+				case 3:
+				case 4:
+					//Current frame goes out	
+					pFilter->m_pulldown_framecount++;
+					break;
+				case 1:
+					*deliversample = false;	
+					if(pFilter->m_pulldown_structure_found)
+					{
+						//save bottom field
+						pFilter->m_pulldown_buffer = new(unsigned int[length/4]);
+						CopyMemory(pFilter->m_pulldown_buffer, pIn, length);
+					}
+					pFilter->m_pulldown_framecount++;
 					return S_OK;
+					break;
+				case 2:
+					//mix with saved field and output frame
+					if(pFilter->m_pulldown_structure_found)
+						mixframebuffers = true;
+					pFilter->m_pulldown_framecount++;
+					break;
 				}
 			}
 
@@ -434,8 +520,90 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 			IMediaSample* pOutputSample = *ppOutputSample;
 			HR_BAIL(pOutputSample->GetPointer(&pOut));
 			HR_BAIL(pOutputSample->SetActualDataLength(length));
-			CopyMemory(pOut, pIn, length);
 
+			if(mixframebuffers)
+			{
+				int width = 0;
+				int bpp = 0;
+				int  height = 0;
+
+				if(ExtractFrameSize(m_mt, width, height, bpp))
+				{
+					if(height > 0)
+					{
+						int x,y;
+						int stride = length / height;
+
+						BYTE *src1 = pIn, *src2 = (BYTE *)pFilter->m_pulldown_buffer, *out = pOut;
+
+						src2 += stride;
+
+#if 1		//use with MainConept Decoder.
+						for(y=0; y<height-3; y+=4)
+						{
+							CopyMemory(out, src1, stride);  out+=stride; 
+							CopyMemory(out, src2, stride);  out+=stride; 
+							
+							src1 += stride*2;
+							src2 += stride*2;	
+							
+							CopyMemory(out, src1, stride);  out+=stride; 
+							CopyMemory(out, src2, stride);  out+=stride; 
+
+							src1 += stride*2;
+							src2 += stride*2;
+						}
+#else		// for the elecard Decoder  -- this seems to have the wrong 4:2:0 chroma handling causing chroma to be 
+						// couples across frames.
+
+						// Average the chroma over the 4:2:0 pairs 
+						for(y=0; y<height-3; y+=4)
+						{
+							for(x=0; x<stride-1;)
+							{
+								out[x] = src1[x]; x++; //Y
+								out[x] = (src1[x] + src1[x+stride*2])>>1; x++; //C
+							}
+							out+=stride; 
+
+							for(x=0; x<stride-1;)
+							{
+								out[x] = src2[x]; x++;
+								out[x] = (src2[x] + src2[x+stride*2])>>1; x++;
+							}
+							out+=stride; 
+							
+							src1 += stride*2;
+							src2 += stride*2;	
+
+							for(x=0; x<stride-1;)
+							{
+								out[x] = src1[x]; x++;
+								out[x] = (src1[x] + src1[x-stride*2])>>1; x++;
+							}
+							out+=stride; 
+
+							for(x=0; x<stride-1;)
+							{
+								out[x] = src2[x]; x++;
+								out[x] = (src2[x] + src2[x-stride*2])>>1; x++;
+							}
+							out+=stride; 
+							
+							src1 += stride*2;
+							src2 += stride*2;	
+						}
+#endif
+					}
+				}
+
+				delete pFilter->m_pulldown_buffer;
+				pFilter->m_pulldown_buffer = NULL;
+			}
+			else
+			{
+				CopyMemory(pOut, pIn, length);
+			}
 
 			IMediaSample2 *pOutSample2;
 			if (SUCCEEDED(pOutputSample->QueryInterface(IID_IMediaSample2,

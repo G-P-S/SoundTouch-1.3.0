@@ -64,9 +64,13 @@ public:
 public:
 	float		m_TempoDelta;
 	float		m_RateDelta;
+	double field_total;
+	double frame_total;
 
 	bool		m_remove_pulldown;
+	bool		m_pulldown_structure_found;
 	int			m_pulldown_framecount;
+	unsigned int *m_pulldown_buffer;
 
     SoundTouch	m_SoundTouch;
 	LONGLONG	m_lastMediaTime;
