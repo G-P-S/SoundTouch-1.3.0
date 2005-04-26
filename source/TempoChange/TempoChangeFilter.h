@@ -54,6 +54,8 @@ public:
 public:	// ICFTempoChangeStats
 	STDMETHODIMP SetTempoDelta(float newTempoDelta);
 	STDMETHODIMP SetRateDelta(float newRateDelta);
+	STDMETHODIMP SetPullDownRemoval(int onoff);		//0 or 1
+	STDMETHODIMP SetFix420Interlaced(int onoff);	//0 or 1
 
 public:
 	CCritSec				m_lock;
@@ -67,6 +69,7 @@ public:
 	double field_total;
 	double frame_total;
 
+	bool		m_fix_420_interlaced;
 	bool		m_remove_pulldown;
 	bool		m_pulldown_structure_found;
 	int			m_pulldown_framecount;

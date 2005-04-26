@@ -107,6 +107,7 @@ CUnknown * WINAPI CTempoChangeFilter::CreateInstance(LPUNKNOWN punk, HRESULT *ph
 CTempoChangeFilter::CTempoChangeFilter(IUnknown* pUnknown, HRESULT* pHR) :
 	CBaseFilter(NAME("CFTempoChange"), pUnknown, &m_lock, CLSID_CFTempoChange)
 {
+	m_fix_420_interlaced = false;
 	m_remove_pulldown = false;
 	m_pulldown_structure_found = false;
 	m_pulldown_framecount = 0;
@@ -224,7 +225,22 @@ STDMETHODIMP CTempoChangeFilter::SetRateDelta(float newRateDelta)
 	m_SoundTouch.setRateChange(m_RateDelta);
 	return S_OK;
 }
-
+//-------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------
+STDMETHODIMP CTempoChangeFilter::SetPullDownRemoval(int onoff)
+{
+	CAutoLock lock(&m_lock);
+	m_remove_pulldown = onoff ? true : false;
+	return S_OK;
+}
+//-------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------
+STDMETHODIMP CTempoChangeFilter::SetFix420Interlaced(int onoff)
+{
+	CAutoLock lock(&m_lock);
+	m_fix_420_interlaced = onoff ? true : false;
+	return S_OK;
+}
 
 
 //-------------------------------------------------------------------------------------------

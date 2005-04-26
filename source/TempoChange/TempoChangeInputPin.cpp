@@ -347,6 +347,47 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 	DWORD length = pInputSample->GetActualDataLength();
 	CTempoChangeFilter* pFilter = (CTempoChangeFilter*)m_pFilter;
 
+
+
+	// Some MPEG Decoders incorrectly handle de-interlace decoding from HD 4:2:0 sources.
+	// The chroma information for the middle pair of 4 lines is swapped.
+	if(pFilter->m_fix_420_interlaced)
+	{
+		int width = 0;
+		int bpp = 0;
+		int height = 0;
+		int field_total = 0;
+		int frame_total = 0;
+
+		if(ExtractFrameSize(m_mt, width, height, bpp))
+		{
+			if(height > 0)
+			{
+				int x,y,tmp;
+				int stride = length / height;
+				int columns = 0;
+
+				BYTE *line1, *line2;
+
+				for(y=0; y<height-4; y+=4)
+				{
+					line1 = &pIn[(y+1)*stride+1]; // swap chroma on line pairs 1 & 2 (out of 0 to 3)
+					line2 = &pIn[(y+2)*stride+1];
+					for(x=1; x<stride-1; x+=2)
+					{	
+						tmp = *line2;
+						*line2 = *line1;
+						*line1 = tmp;
+	
+						line1 += 2;
+						line2 += 2;
+					}					
+				}					
+			}
+		}
+	}
+
+
 	if(pFilter->m_TempoDelta || pFilter->m_RateDelta || pFilter->m_remove_pulldown)
 	{
 		int returnedsamples = 0;
@@ -359,35 +400,24 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 			IMediaSample* pOutputSample = *ppOutputSample;
 			HR_BAIL(pOutputSample->GetPointer(&pOut));
 
-
+			// stretch of shrink the audio
 			pFilter->m_SoundTouch.putSamples((SAMPLETYPE *)pIn, length / 4);
-
 			returnedsamples = pFilter->m_SoundTouch.receiveSamples((SAMPLETYPE *)pOut, 32768);
 
 			HR_BAIL(pOutputSample->SetActualDataLength(returnedsamples*4));
 
-
 			IMediaSample2 *pOutSample2;
 			if (SUCCEEDED(pOutputSample->QueryInterface(IID_IMediaSample2,
-													 (void **)&pOutSample2))) {
+													 (void **)&pOutSample2))) 
+			{
 				/*  Modify it */
 				AM_SAMPLE2_PROPERTIES OutProps;
 				EXECUTE_ASSERT(SUCCEEDED(pOutSample2->GetProperties(
 					FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, tStart), (PBYTE)&OutProps)
 				));
 
-
-		//		OutProps.dwTypeSpecificFlags = pProps->dwTypeSpecificFlags;
-		//		OutProps.dwSampleFlags =
-		//			(OutProps.dwSampleFlags & AM_SAMPLE_TYPECHANGED) |
-		//			(pProps->dwSampleFlags & ~AM_SAMPLE_TYPECHANGED);
 				OutProps.cbData = FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, dwStreamId);
  
-		//		if (pProps->dwSampleFlags & AM_SAMPLE_DATADISCONTINUITY) {
-		//			m_bSampleSkipped = FALSE;
-		//		}
-		
-
 				OutProps.tStart = pFilter->m_lastRefTime;
 				pFilter->m_lastRefTime += (REFERENCE_TIME)returnedsamples * 10000000 / 48000;
 				OutProps.tStop  = pFilter->m_lastRefTime;
@@ -397,8 +427,9 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 					(PBYTE)&OutProps
 				);
 				pOutSample2->Release();
-			} else {
-			
+			} 
+			else 
+			{
 				// Copy the media times
 
 				LONGLONG MediaStart,MediaEnd;
@@ -428,6 +459,7 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 				}
 
 
+				// Guess the structure for reversing the pulldown.
 				if(pFilter->m_pulldown_structure_found == false)
 				{
 					int width = 0;
@@ -449,18 +481,7 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 								pFilter->field_total = 0;
 								pFilter->frame_total = 0;
 								
-						/*		for(y=10; y<height-10; y+=2)
-								{
-									pFilter->field_total += abs(pIn[y*stride+x] - pIn[(y+2)*stride+x]);
-									pFilter->field_total += abs(pIn[(y+1)*stride+x] - pIn[(y+3)*stride+x]);
-
-									pFilter->frame_total += abs(pIn[y*stride+x] - pIn[(y+1)*stride+x]);
-									pFilter->frame_total += abs(pIn[(y+1)*stride+x] - pIn[(y+2)*stride+x]);
-									pFilter->frame_total += abs(pIn[(y+2)*stride+x] - pIn[(y+3)*stride+x]);
-								}
-
-								if(pFilter->frame_total > pFilter->field_total*5) // x 4 seem to the stop false positives.
-						*/		for(y=10; y<height-10; y+=2)
+								for(y=10; y<height-10; y+=2)
 								{
 									pFilter->field_total += (double)((pIn[(y+0)*stride+x] - pIn[(y+2)*stride+x]) * (pIn[(y+0)*stride+x] - pIn[(y+2)*stride+x]));
 									pFilter->field_total += (double)((pIn[(y+1)*stride+x] - pIn[(y+3)*stride+x]) * (pIn[(y+1)*stride+x] - pIn[(y+3)*stride+x]));
@@ -480,13 +501,13 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 										break;
 									}
 								}
-								
-						
-							}					
+							}
 						}
 					}
 				}
 
+
+				// Input of pulldown video in one of 5 frame types.
 				switch(pFilter->m_pulldown_framecount)
 				{
 				case 0:
@@ -516,6 +537,7 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 			}
 
 
+
 			HR_BAIL(InitializeOutputSample(pInputSample, ppOutputSample));
 			IMediaSample* pOutputSample = *ppOutputSample;
 			HR_BAIL(pOutputSample->GetPointer(&pOut));
@@ -538,62 +560,15 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 
 						src2 += stride;
 
-#if 1		//use with MainConept Decoder.
-						for(y=0; y<height-3; y+=4)
+						// mix frame for the two field to create the progressive frame.
+						for(y=0; y<height-1; y+=2)
 						{
 							CopyMemory(out, src1, stride);  out+=stride; 
 							CopyMemory(out, src2, stride);  out+=stride; 
 							
-							src1 += stride*2;
-							src2 += stride*2;	
-							
-							CopyMemory(out, src1, stride);  out+=stride; 
-							CopyMemory(out, src2, stride);  out+=stride; 
-
 							src1 += stride*2;
 							src2 += stride*2;
 						}
-#else		// for the elecard Decoder  -- this seems to have the wrong 4:2:0 chroma handling causing chroma to be 
-						// couples across frames.
-
-						// Average the chroma over the 4:2:0 pairs 
-						for(y=0; y<height-3; y+=4)
-						{
-							for(x=0; x<stride-1;)
-							{
-								out[x] = src1[x]; x++; //Y
-								out[x] = (src1[x] + src1[x+stride*2])>>1; x++; //C
-							}
-							out+=stride; 
-
-							for(x=0; x<stride-1;)
-							{
-								out[x] = src2[x]; x++;
-								out[x] = (src2[x] + src2[x+stride*2])>>1; x++;
-							}
-							out+=stride; 
-							
-							src1 += stride*2;
-							src2 += stride*2;	
-
-							for(x=0; x<stride-1;)
-							{
-								out[x] = src1[x]; x++;
-								out[x] = (src1[x] + src1[x-stride*2])>>1; x++;
-							}
-							out+=stride; 
-
-							for(x=0; x<stride-1;)
-							{
-								out[x] = src2[x]; x++;
-								out[x] = (src2[x] + src2[x-stride*2])>>1; x++;
-							}
-							out+=stride; 
-							
-							src1 += stride*2;
-							src2 += stride*2;	
-						}
-#endif
 					}
 				}
 
@@ -607,24 +582,15 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 
 			IMediaSample2 *pOutSample2;
 			if (SUCCEEDED(pOutputSample->QueryInterface(IID_IMediaSample2,
-													 (void **)&pOutSample2))) {
+													 (void **)&pOutSample2))) 
+			{
 				/*  Modify it */
 				AM_SAMPLE2_PROPERTIES OutProps;
 				EXECUTE_ASSERT(SUCCEEDED(pOutSample2->GetProperties(
 					FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, tStart), (PBYTE)&OutProps)
 				));
 
-
-		//		OutProps.dwTypeSpecificFlags = pProps->dwTypeSpecificFlags;
-		//		OutProps.dwSampleFlags =
-		//			(OutProps.dwSampleFlags & AM_SAMPLE_TYPECHANGED) |
-		//			(pProps->dwSampleFlags & ~AM_SAMPLE_TYPECHANGED);
-				OutProps.cbData = FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, dwStreamId);
- 
-		//		if (pProps->dwSampleFlags & AM_SAMPLE_DATADISCONTINUITY) {
-		//			m_bSampleSkipped = FALSE;
-		//		}
-		
+				OutProps.cbData = FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, dwStreamId);		
 
 				OutProps.tStart = pFilter->m_lastVideoRefTime;
 				pFilter->m_lastVideoRefTime += (REFERENCE_TIME)avgframetime;
@@ -635,8 +601,9 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 					(PBYTE)&OutProps
 				);
 				pOutSample2->Release();
-			} else {
-			
+			} 
+			else 
+			{			
 				// Copy the media times
 
 				LONGLONG MediaStart,MediaEnd;

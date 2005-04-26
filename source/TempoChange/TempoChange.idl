@@ -8,7 +8,9 @@ import "unknwn.idl";
 interface ICFTempoChangeStats : IUnknown
 {
 	HRESULT SetTempoDelta([in]float newTempoDeltas);	// default = 0.0				
-	HRESULT SetRateDelta([in]float newRateDeltas);	// default = 0.0				
+	HRESULT SetRateDelta([in]float newRateDeltas);		// default = 0.0				
+	HRESULT SetPullDownRemoval([in]int onoff);			// default = false
+	HRESULT SetFix420Interlaced([in]int onoff);			// default = false
 };
 
 [
