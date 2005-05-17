@@ -348,10 +348,10 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 	CTempoChangeFilter* pFilter = (CTempoChangeFilter*)m_pFilter;
 
 
-
 	// Some MPEG Decoders incorrectly handle de-interlace decoding from HD 4:2:0 sources.
 	// The chroma information for the middle pair of 4 lines is swapped.
-	if(pFilter->m_fix_420_interlaced)
+	//Also the 4:2:0 to 4:2:2 is often just chroma line duplication, so we can optional add that filtering..
+	if(pFilter->m_fix_420_interlaced || pFilter->m_filter_420_to_422)
 	{
 		int width = 0;
 		int bpp = 0;
@@ -367,25 +367,85 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 				int stride = length / height;
 				int columns = 0;
 
+				BYTE *line0, *line3, *line4, *line5;
 				BYTE *line1, *line2;
 
-				for(y=0; y<height-4; y+=4)
+				if(pFilter->m_fix_420_interlaced && pFilter->m_filter_420_to_422)
 				{
-					line1 = &pIn[(y+1)*stride+1]; // swap chroma on line pairs 1 & 2 (out of 0 to 3)
-					line2 = &pIn[(y+2)*stride+1];
-					for(x=1; x<stride-1; x+=2)
-					{	
-						tmp = *line2;
-						*line2 = *line1;
-						*line1 = tmp;
-	
-						line1 += 2;
-						line2 += 2;
-					}					
-				}					
+					for(y=0; y<height-8; y+=4)
+					{
+						// swap chroma on line pairs 1 & 2 (out of 0 to 3)
+						line0 = &pIn[(y+0)*stride+1];
+						line1 = &pIn[(y+1)*stride+1];
+						line2 = &pIn[(y+2)*stride+1];
+						line3 = &pIn[(y+3)*stride+1];
+						line4 = &pIn[(y+4)*stride+1];
+						line5 = &pIn[(y+6)*stride+1]; // line 5 is swapped with 6.
+
+
+						for(x=1; x<stride-1; x+=2)
+						{	
+							*line1 = *line2;
+							*line2 = (*line0 + *line4) >> 1;
+							*line3 = (*line1 + *line5) >> 1;
+								
+							line0 += 2;
+							line1 += 2;
+							line2 += 2;
+							line3 += 2;
+							line4 += 2;
+							line5 += 2;
+						}					
+					}		
+				}
+				else if(pFilter->m_fix_420_interlaced)
+				{
+					for(y=0; y<height-3; y+=4)
+					{
+						line1 = &pIn[(y+1)*stride+1]; // swap chroma on line pairs 1 & 2 (out of 0 to 3)
+						line2 = &pIn[(y+2)*stride+1];
+
+						for(x=1; x<stride-1; x+=2)
+						{	
+							tmp = *line2;
+							*line2 = *line1;
+							*line1 = tmp;
+
+							line1 += 2;
+							line2 += 2;
+						}					
+					}		
+				}
+				else //m_filter_420_to_422 only
+				{
+					for(y=0; y<height-8; y+=4)
+					{
+						line0 = &pIn[(y+0)*stride+1];
+						line1 = &pIn[(y+1)*stride+1];
+						line2 = &pIn[(y+2)*stride+1];
+						line3 = &pIn[(y+3)*stride+1];
+						line4 = &pIn[(y+4)*stride+1]; 
+						line5 = &pIn[(y+5)*stride+1]; 
+
+
+						for(x=1; x<stride-1; x+=2)
+						{	
+							*line2 = (*line0 + *line4) >> 1;
+							*line3 = (*line1 + *line5) >> 1;
+
+							line0 += 2;
+							line1 += 2;
+							line2 += 2;								
+							line3 += 2;
+							line4 += 2;
+							line5 += 2;
+						}					
+					}		
+				}
 			}
 		}
 	}
+
 
 
 	if(pFilter->m_TempoDelta || pFilter->m_RateDelta || pFilter->m_remove_pulldown)
@@ -460,7 +520,6 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 
 
 				// Guess the structure for reversing the pulldown.
-				if(pFilter->m_pulldown_structure_found == false)
 				{
 					int width = 0;
 					int bpp = 0;
@@ -475,37 +534,72 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 							int x,y;
 							int stride = length / height;
 							int columns = 0;
+							int step = 1;
 
-							for(x=0; x<stride; x+=2)
+
+							pFilter->field_total = 0;
+							pFilter->frame_total = 0;
+
+							if(pFilter->m_pulldown_structure_found)
+								step = 20;
+
+							for(x=10; x<stride-10; x+=2*step)
 							{	
-								pFilter->field_total = 0;
-								pFilter->frame_total = 0;
 								
-								for(y=10; y<height-10; y+=2)
+								for(y=10; y<height-10; y+=2*step)
 								{
 									pFilter->field_total += (double)((pIn[(y+0)*stride+x] - pIn[(y+2)*stride+x]) * (pIn[(y+0)*stride+x] - pIn[(y+2)*stride+x]));
 									pFilter->field_total += (double)((pIn[(y+1)*stride+x] - pIn[(y+3)*stride+x]) * (pIn[(y+1)*stride+x] - pIn[(y+3)*stride+x]));
 
 									pFilter->frame_total += (double)((pIn[(y+0)*stride+x] - pIn[(y+1)*stride+x]) * (pIn[(y+0)*stride+x] - pIn[(y+1)*stride+x]));
-									pFilter->frame_total += (double)((pIn[(y+1)*stride+x] - pIn[(y+2)*stride+x]) * (pIn[(y+1)*stride+x] - pIn[(y+2)*stride+x]));
 									pFilter->frame_total += (double)((pIn[(y+2)*stride+x] - pIn[(y+3)*stride+x]) * (pIn[(y+2)*stride+x] - pIn[(y+3)*stride+x]));
 								}
+							}
 
-								if(pFilter->field_total > height*10 && pFilter->frame_total > pFilter->field_total*2.0) // x 4 seem to the stop false positives.
+							int curr = pFilter->m_pulldown_framecount;
+							int prev = (curr + 4) % 5;
+							float ratio = pFilter->frame_total/pFilter->field_total;
+							pFilter->m_ratios[curr] *= 0.75;
+							pFilter->m_ratios[curr] += ratio*0.25;
+
+					
+						/*	if(	pFilter->frame_total > pFilter->field_total*2.0) // x 4 seem to the stop false positives.
+							{
+							//	columns++;
+							//	if(columns > 10)
 								{
-									columns++;
-									if(columns > 10)
+							//		pFilter->m_pulldown_structure_found = true;
+									pFilter->m_pulldown_framecount = 1; // discard this frame
+								//	break;
+								}
+							}*/
+
+							if(	(pFilter->m_ratios[curr] > 2.0 * pFilter->m_ratios[prev] && pFilter->m_ratios[prev] > 0.0) ||
+								(pFilter->m_ratios[prev] == 0.0 && pFilter->frame_total > pFilter->field_total*2.0))
+							{
+								pFilter->m_pulldown_structure_found = true;
+		
+								if(pFilter->m_pulldown_framecount != 1) // we are changing the order.
+								{
+									pFilter->m_pulldown_framecount = 1; // discard this frame
+									for(int i=0; i<6; i++)
 									{
-										pFilter->m_pulldown_structure_found = true;
-										pFilter->m_pulldown_framecount = 1; // discard this frame
-										break;
+										pFilter->m_ratios[i] = 0.0;
 									}
+									pFilter->m_ratios[1] = ratio*0.25;
 								}
 							}
+
+
+							//static int frame = 0;
+							//FILE *fp = fopen("n:/de-int.txt","a");
+							//fprintf(fp,"%04d : ratio = %4.1f  -- %3.1f,%3.1f,%3.1f,%3.1f,%3.1f\n", frame++, ratio, pFilter->m_ratios[0], pFilter->m_ratios[1], pFilter->m_ratios[2], pFilter->m_ratios[3], pFilter->m_ratios[4]);
+							//fclose(fp);
 						}
 					}
 				}
 
+				//	if(pFilter->m_fix_420_interlaced && (pFilter->m_pulldown_framecount==1 || pFilter->m_pulldown_framecount==2))
 
 				// Input of pulldown video in one of 5 frame types.
 				switch(pFilter->m_pulldown_framecount)
@@ -518,18 +612,21 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 					break;
 				case 1:
 					*deliversample = false;	
-					if(pFilter->m_pulldown_structure_found)
+				//	if(pFilter->m_pulldown_structure_found)
 					{
 						//save bottom field
-						pFilter->m_pulldown_buffer = new(unsigned int[length/4]);
-						CopyMemory(pFilter->m_pulldown_buffer, pIn, length);
+						if(pFilter->m_pulldown_buffer == NULL) // it should be NULL as this is freed which pulldown sequence/
+							pFilter->m_pulldown_buffer = new(unsigned int[length/4]);
+						if(pFilter->m_pulldown_buffer)
+							CopyMemory(pFilter->m_pulldown_buffer, pIn, length);
 					}
 					pFilter->m_pulldown_framecount++;
 					return S_OK;
 					break;
 				case 2:
 					//mix with saved field and output frame
-					if(pFilter->m_pulldown_structure_found)
+					//if(pFilter->m_pulldown_structure_found)
+					if(pFilter->m_pulldown_buffer)
 						mixframebuffers = true;
 					pFilter->m_pulldown_framecount++;
 					break;
@@ -543,7 +640,7 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 			HR_BAIL(pOutputSample->GetPointer(&pOut));
 			HR_BAIL(pOutputSample->SetActualDataLength(length));
 
-			if(mixframebuffers)
+			if(mixframebuffers && pFilter->m_pulldown_buffer)
 			{
 				int width = 0;
 				int bpp = 0;

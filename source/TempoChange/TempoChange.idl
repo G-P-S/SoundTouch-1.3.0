@@ -11,6 +11,7 @@ interface ICFTempoChangeStats : IUnknown
 	HRESULT SetRateDelta([in]float newRateDeltas);		// default = 0.0				
 	HRESULT SetPullDownRemoval([in]int onoff);			// default = false
 	HRESULT SetFix420Interlaced([in]int onoff);			// default = false
+	HRESULT SetFilter420to422([in]int onoff);			// default = false
 };
 
 [

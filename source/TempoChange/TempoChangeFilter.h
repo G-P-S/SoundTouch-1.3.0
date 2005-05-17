@@ -56,6 +56,7 @@ public:	// ICFTempoChangeStats
 	STDMETHODIMP SetRateDelta(float newRateDelta);
 	STDMETHODIMP SetPullDownRemoval(int onoff);		//0 or 1
 	STDMETHODIMP SetFix420Interlaced(int onoff);	//0 or 1
+	STDMETHODIMP SetFilter420to422(int onoff);		//0 or 1
 
 public:
 	CCritSec				m_lock;
@@ -70,10 +71,12 @@ public:
 	double frame_total;
 
 	bool		m_fix_420_interlaced;
+	bool		m_filter_420_to_422;
 	bool		m_remove_pulldown;
 	bool		m_pulldown_structure_found;
 	int			m_pulldown_framecount;
 	unsigned int *m_pulldown_buffer;
+	float		m_ratios[6];
 
     SoundTouch	m_SoundTouch;
 	LONGLONG	m_lastMediaTime;
