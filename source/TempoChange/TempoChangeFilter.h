@@ -70,14 +70,6 @@ public:
 	double field_total;
 	double frame_total;
 
-	bool		m_fix_420_interlaced;
-	bool		m_filter_420_to_422;
-	bool		m_remove_pulldown;
-	bool		m_pulldown_structure_found;
-	int			m_pulldown_framecount;
-	unsigned int *m_pulldown_buffer;
-	float		m_ratios[6];
-
     SoundTouch	m_SoundTouch;
 	LONGLONG	m_lastMediaTime;
 	LONGLONG	m_lastVideoMediaTime;

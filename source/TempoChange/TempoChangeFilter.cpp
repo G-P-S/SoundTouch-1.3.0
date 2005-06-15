@@ -107,15 +107,6 @@ CUnknown * WINAPI CTempoChangeFilter::CreateInstance(LPUNKNOWN punk, HRESULT *ph
 CTempoChangeFilter::CTempoChangeFilter(IUnknown* pUnknown, HRESULT* pHR) :
 	CBaseFilter(NAME("CFTempoChange"), pUnknown, &m_lock, CLSID_CFTempoChange)
 {
-	m_fix_420_interlaced = false;
-	m_filter_420_to_422 = false;
-	m_remove_pulldown = false;
-	m_pulldown_structure_found = false;
-	m_pulldown_framecount = 0;
-	m_pulldown_buffer = NULL;
-	for(int i=0; i<6; i++)
-		m_ratios[i] = 0.0;
-
 	m_TempoDelta = 0.0; // -4.0
 	m_lastMediaTime = 0;
 	m_lastVideoMediaTime = 0;
@@ -148,8 +139,6 @@ CTempoChangeFilter::CTempoChangeFilter(IUnknown* pUnknown, HRESULT* pHR) :
 //-------------------------------------------------------------------------------------------
 CTempoChangeFilter::~CTempoChangeFilter()
 {
-	if(m_pulldown_buffer)
-		delete m_pulldown_buffer;
 	delete m_pInputPin;
 	delete m_pOutputPin;
 }
@@ -228,31 +217,6 @@ STDMETHODIMP CTempoChangeFilter::SetRateDelta(float newRateDelta)
 	CAutoLock lock(&m_lock);
 	m_RateDelta = newRateDelta;
 	m_SoundTouch.setRateChange(m_RateDelta);
-	return S_OK;
-}
-//-------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------
-STDMETHODIMP CTempoChangeFilter::SetPullDownRemoval(int onoff)
-{
-	CAutoLock lock(&m_lock);
-	m_remove_pulldown = onoff ? true : false;
-	return S_OK;
-}
-//-------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------
-STDMETHODIMP CTempoChangeFilter::SetFix420Interlaced(int onoff)
-{
-	CAutoLock lock(&m_lock);
-	m_fix_420_interlaced = onoff ? true : false;
-	return S_OK;
-}
-
-//-------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------
-STDMETHODIMP CTempoChangeFilter::SetFilter420to422(int onoff)
-{
-	CAutoLock lock(&m_lock);
-	m_filter_420_to_422 = onoff ? true : false;
 	return S_OK;
 }
 
