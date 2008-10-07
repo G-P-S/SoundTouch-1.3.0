@@ -364,9 +364,14 @@ HRESULT CTempoChangeInputPin::CopyInputSampleToOutputSample(IMediaSample* pInput
 			IMediaSample* pOutputSample = *ppOutputSample;
 			HR_BAIL(pOutputSample->GetPointer(&pOut));
 
-			// stretch of shrink the audio
+			DWORD olength = pOutputSample->GetSize(); //buffer size
+			DWORD oSamples = olength / 4;
+
+			if(oSamples > 32768) oSamples = 32768;
+
+			// stretch or shrink the audio
 			pFilter->m_SoundTouch.putSamples((SAMPLETYPE *)pIn, length / 4);
-			returnedsamples = pFilter->m_SoundTouch.receiveSamples((SAMPLETYPE *)pOut, 32768);
+			returnedsamples = pFilter->m_SoundTouch.receiveSamples((SAMPLETYPE *)pOut, oSamples);
 
 			HR_BAIL(pOutputSample->SetActualDataLength(returnedsamples*4));
 
