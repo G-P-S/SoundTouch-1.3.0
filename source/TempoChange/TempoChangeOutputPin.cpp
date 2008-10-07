@@ -77,6 +77,8 @@ HRESULT CTempoChangeOutputPin::DecideBufferSize(IMemAllocator * pAlloc,
 	SET_IF_LESS(pProps, inputProps, cbPrefix);
 	SET_IF_LESS(pProps, inputProps, cbAlign);
 
+	pProps->cbBuffer *= 4;  //DAN20081007 -- increase room to handle large slow downs.
+
 	CTempoChangeFilter* pFilter = (CTempoChangeFilter*)m_pFilter;
 	
 	ALLOCATOR_PROPERTIES actualProps;
