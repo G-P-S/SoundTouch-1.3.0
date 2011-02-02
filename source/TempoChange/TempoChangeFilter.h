@@ -8,7 +8,6 @@ class CTempoChangeInputPin;
 class CTempoChangeOutputPin;
 
 //#include <stdexcept.h>
-#include <stdio.h>
 #include "SoundTouch.h"
 #include "BPMDetect.h"
 

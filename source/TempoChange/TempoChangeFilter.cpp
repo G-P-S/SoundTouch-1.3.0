@@ -7,10 +7,7 @@
 //					and used for AdobeHDV's preview before capture because the
 //					MainConcept Decoder honors VMR qualty messages and ends up at only 5 fps.
 //-------------------------------------------------------------------------------------------
-#include <windows.h>
-#include <streams.h>
-#include <bdatypes.h>
-
+#include "StdAfx.h"
 #include "TempoChangeFilter.h"
 #include "TempoChangeInputPin.h"
 #include "TempoChangeOutputPin.h"

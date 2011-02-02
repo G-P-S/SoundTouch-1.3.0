@@ -1,14 +1,22 @@
+
+
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
 
-/* File created by MIDL compiler version 5.01.0164 */
-/* at Wed Apr 15 11:00:05 2009
+ /* File created by MIDL compiler version 7.00.0555 */
+/* at Wed Feb 02 11:20:22 2011
  */
-/* Compiler settings for C:\Brisco\RTPipe\SoundTouch\source\TempoChange\TempoChange.idl:
-    Os (OptLev=s), W1, Zp8, env=Win32, ms_ext, c_ext
+/* Compiler settings for TempoChange.idl:
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
+    protocol : dce , ms_ext, c_ext
     error checks: allocation ref bounds_check enum stub_data 
+    VC __declspec() decoration level: 
+         __declspec(uuid()), __declspec(selectany), __declspec(novtable)
+         DECLSPEC_UUID(), MIDL_INTERFACE()
 */
-//@@MIDL_FILE_HEADING(  )
+/* @@MIDL_FILE_HEADING(  ) */
+
+#pragma warning( disable: 4049 )  /* more than 64k source lines */
 
 
 /* verify that the <rpcndr.h> version is high enough to compile this file*/
@@ -31,9 +39,9 @@
 #ifndef __TempoChange_i_h__
 #define __TempoChange_i_h__
 
-#ifdef __cplusplus
-extern "C"{
-#endif 
+#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#pragma once
+#endif
 
 /* Forward Declarations */ 
 
@@ -58,8 +66,10 @@ typedef struct CFTempoChangeClass CFTempoChangeClass;
 /* header files for imported files */
 #include "unknwn.h"
 
-void __RPC_FAR * __RPC_USER MIDL_user_allocate(size_t);
-void __RPC_USER MIDL_user_free( void __RPC_FAR * ); 
+#ifdef __cplusplus
+extern "C"{
+#endif 
+
 
 #ifndef __ICFTempoChangeStats_INTERFACE_DEFINED__
 #define __ICFTempoChangeStats_INTERFACE_DEFINED__
@@ -90,23 +100,24 @@ EXTERN_C const IID IID_ICFTempoChangeStats;
     {
         BEGIN_INTERFACE
         
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )( 
-            ICFTempoChangeStats __RPC_FAR * This,
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            ICFTempoChangeStats * This,
             /* [in] */ REFIID riid,
-            /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject);
+            /* [annotation][iid_is][out] */ 
+            __RPC__deref_out  void **ppvObject);
         
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )( 
-            ICFTempoChangeStats __RPC_FAR * This);
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            ICFTempoChangeStats * This);
         
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )( 
-            ICFTempoChangeStats __RPC_FAR * This);
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            ICFTempoChangeStats * This);
         
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetTempoDelta )( 
-            ICFTempoChangeStats __RPC_FAR * This,
+        HRESULT ( STDMETHODCALLTYPE *SetTempoDelta )( 
+            ICFTempoChangeStats * This,
             /* [in] */ float newTempoDeltas);
         
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetRateDelta )( 
-            ICFTempoChangeStats __RPC_FAR * This,
+        HRESULT ( STDMETHODCALLTYPE *SetRateDelta )( 
+            ICFTempoChangeStats * This,
             /* [in] */ float newRateDeltas);
         
         END_INTERFACE
@@ -114,7 +125,7 @@ EXTERN_C const IID IID_ICFTempoChangeStats;
 
     interface ICFTempoChangeStats
     {
-        CONST_VTBL struct ICFTempoChangeStatsVtbl __RPC_FAR *lpVtbl;
+        CONST_VTBL struct ICFTempoChangeStatsVtbl *lpVtbl;
     };
 
     
@@ -123,50 +134,26 @@ EXTERN_C const IID IID_ICFTempoChangeStats;
 
 
 #define ICFTempoChangeStats_QueryInterface(This,riid,ppvObject)	\
-    (This)->lpVtbl -> QueryInterface(This,riid,ppvObject)
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
 
 #define ICFTempoChangeStats_AddRef(This)	\
-    (This)->lpVtbl -> AddRef(This)
+    ( (This)->lpVtbl -> AddRef(This) ) 
 
 #define ICFTempoChangeStats_Release(This)	\
-    (This)->lpVtbl -> Release(This)
+    ( (This)->lpVtbl -> Release(This) ) 
 
 
 #define ICFTempoChangeStats_SetTempoDelta(This,newTempoDeltas)	\
-    (This)->lpVtbl -> SetTempoDelta(This,newTempoDeltas)
+    ( (This)->lpVtbl -> SetTempoDelta(This,newTempoDeltas) ) 
 
 #define ICFTempoChangeStats_SetRateDelta(This,newRateDeltas)	\
-    (This)->lpVtbl -> SetRateDelta(This,newRateDeltas)
+    ( (This)->lpVtbl -> SetRateDelta(This,newRateDeltas) ) 
 
 #endif /* COBJMACROS */
 
 
 #endif 	/* C style interface */
 
-
-
-HRESULT STDMETHODCALLTYPE ICFTempoChangeStats_SetTempoDelta_Proxy( 
-    ICFTempoChangeStats __RPC_FAR * This,
-    /* [in] */ float newTempoDeltas);
-
-
-void __RPC_STUB ICFTempoChangeStats_SetTempoDelta_Stub(
-    IRpcStubBuffer *This,
-    IRpcChannelBuffer *_pRpcChannelBuffer,
-    PRPC_MESSAGE _pRpcMessage,
-    DWORD *_pdwStubPhase);
-
-
-HRESULT STDMETHODCALLTYPE ICFTempoChangeStats_SetRateDelta_Proxy( 
-    ICFTempoChangeStats __RPC_FAR * This,
-    /* [in] */ float newRateDeltas);
-
-
-void __RPC_STUB ICFTempoChangeStats_SetRateDelta_Stub(
-    IRpcStubBuffer *This,
-    IRpcChannelBuffer *_pRpcChannelBuffer,
-    PRPC_MESSAGE _pRpcMessage,
-    DWORD *_pdwStubPhase);
 
 
 
@@ -201,3 +188,5 @@ CFTempoChangeClass;
 #endif
 
 #endif
+
+

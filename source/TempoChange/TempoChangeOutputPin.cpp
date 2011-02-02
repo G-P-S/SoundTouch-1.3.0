@@ -1,12 +1,10 @@
 //-------------------------------------------------------------------------------------------
 // TempoChangeOutputPin.cpp
 //-------------------------------------------------------------------------------------------
-#include <streams.h>
+#include "StdAfx.h"
 #include "TempoChangeFilter.h"
 #include "TempoChangeInputPin.h"
 #include "TempoChangeOutputPin.h"
-#include <atlbase.h>
-#include <Dvdmedia.h>
 
 #define PIN_NAME	NAME("CFTempoChange_OutputPin")
 

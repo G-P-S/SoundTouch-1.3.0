@@ -1,14 +1,38 @@
+
+
 /* this ALWAYS GENERATED file contains the proxy stub code */
 
 
-/* File created by MIDL compiler version 5.01.0164 */
-/* at Wed Apr 15 11:00:05 2009
+ /* File created by MIDL compiler version 7.00.0555 */
+/* at Wed Feb 02 11:20:22 2011
  */
-/* Compiler settings for C:\Brisco\RTPipe\SoundTouch\source\TempoChange\TempoChange.idl:
-    Os (OptLev=s), W1, Zp8, env=Win32, ms_ext, c_ext
+/* Compiler settings for TempoChange.idl:
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
+    protocol : dce , ms_ext, c_ext
     error checks: allocation ref bounds_check enum stub_data 
+    VC __declspec() decoration level: 
+         __declspec(uuid()), __declspec(selectany), __declspec(novtable)
+         DECLSPEC_UUID(), MIDL_INTERFACE()
 */
-//@@MIDL_FILE_HEADING(  )
+/* @@MIDL_FILE_HEADING(  ) */
+
+#if !defined(_M_IA64) && !defined(_M_AMD64)
+
+
+#pragma warning( disable: 4049 )  /* more than 64k source lines */
+#if _MSC_VER >= 1200
+#pragma warning(push)
+#endif
+
+#pragma warning( disable: 4211 )  /* redefine extern to static */
+#pragma warning( disable: 4232 )  /* dllimport identity*/
+#pragma warning( disable: 4024 )  /* array to pointer mapping*/
+#pragma warning( disable: 4152 )  /* function/data pointer conversion in expression */
+#pragma warning( disable: 4100 ) /* unreferenced arguments in x86 call */
+
+#pragma optimize("", off ) 
+
+#define USE_STUBLESS_PROXY
 
 
 /* verify that the <rpcproxy.h> version is high enough to compile this file*/
@@ -20,29 +44,135 @@
 #include "rpcproxy.h"
 #ifndef __RPCPROXY_H_VERSION__
 #error this stub requires an updated version of <rpcproxy.h>
-#endif // __RPCPROXY_H_VERSION__
+#endif /* __RPCPROXY_H_VERSION__ */
 
 
 #include "TempoChange_i.h"
 
 #define TYPE_FORMAT_STRING_SIZE   3                                 
-#define PROC_FORMAT_STRING_SIZE   5                                 
+#define PROC_FORMAT_STRING_SIZE   57                                
+#define EXPR_FORMAT_STRING_SIZE   1                                 
+#define TRANSMIT_AS_TABLE_SIZE    0            
+#define WIRE_MARSHAL_TABLE_SIZE   0            
 
-typedef struct _MIDL_TYPE_FORMAT_STRING
+typedef struct _TempoChange_MIDL_TYPE_FORMAT_STRING
     {
     short          Pad;
     unsigned char  Format[ TYPE_FORMAT_STRING_SIZE ];
-    } MIDL_TYPE_FORMAT_STRING;
+    } TempoChange_MIDL_TYPE_FORMAT_STRING;
 
-typedef struct _MIDL_PROC_FORMAT_STRING
+typedef struct _TempoChange_MIDL_PROC_FORMAT_STRING
     {
     short          Pad;
     unsigned char  Format[ PROC_FORMAT_STRING_SIZE ];
-    } MIDL_PROC_FORMAT_STRING;
+    } TempoChange_MIDL_PROC_FORMAT_STRING;
+
+typedef struct _TempoChange_MIDL_EXPR_FORMAT_STRING
+    {
+    long          Pad;
+    unsigned char  Format[ EXPR_FORMAT_STRING_SIZE ];
+    } TempoChange_MIDL_EXPR_FORMAT_STRING;
 
 
-extern const MIDL_TYPE_FORMAT_STRING __MIDL_TypeFormatString;
-extern const MIDL_PROC_FORMAT_STRING __MIDL_ProcFormatString;
+static const RPC_SYNTAX_IDENTIFIER  _RpcTransferSyntax = 
+{{0x8A885D04,0x1CEB,0x11C9,{0x9F,0xE8,0x08,0x00,0x2B,0x10,0x48,0x60}},{2,0}};
+
+
+extern const TempoChange_MIDL_TYPE_FORMAT_STRING TempoChange__MIDL_TypeFormatString;
+extern const TempoChange_MIDL_PROC_FORMAT_STRING TempoChange__MIDL_ProcFormatString;
+extern const TempoChange_MIDL_EXPR_FORMAT_STRING TempoChange__MIDL_ExprFormatString;
+
+
+extern const MIDL_STUB_DESC Object_StubDesc;
+
+
+extern const MIDL_SERVER_INFO ICFTempoChangeStats_ServerInfo;
+extern const MIDL_STUBLESS_PROXY_INFO ICFTempoChangeStats_ProxyInfo;
+
+
+
+#if !defined(__RPC_WIN32__)
+#error  Invalid build platform for this stub.
+#endif
+
+#if !(TARGET_IS_NT40_OR_LATER)
+#error You need Windows NT 4.0 or later to run this stub because it uses these features:
+#error   -Oif or -Oicf, float, double or hyper in -Oif or -Oicf.
+#error However, your C/C++ compilation flags indicate you intend to run this app on earlier systems.
+#error This app will fail with the RPC_X_WRONG_STUB_VERSION error.
+#endif
+
+
+static const TempoChange_MIDL_PROC_FORMAT_STRING TempoChange__MIDL_ProcFormatString =
+    {
+        0,
+        {
+
+	/* Procedure SetTempoDelta */
+
+			0x33,		/* FC_AUTO_HANDLE */
+			0x6c,		/* Old Flags:  object, Oi2 */
+/*  2 */	NdrFcLong( 0x0 ),	/* 0 */
+/*  6 */	NdrFcShort( 0x3 ),	/* 3 */
+/*  8 */	NdrFcShort( 0xc ),	/* x86 Stack size/offset = 12 */
+/* 10 */	NdrFcShort( 0x8 ),	/* 8 */
+/* 12 */	NdrFcShort( 0x8 ),	/* 8 */
+/* 14 */	0x4,		/* Oi2 Flags:  has return, */
+			0x2,		/* 2 */
+
+	/* Parameter newTempoDeltas */
+
+/* 16 */	NdrFcShort( 0x48 ),	/* Flags:  in, base type, */
+/* 18 */	NdrFcShort( 0x4 ),	/* x86 Stack size/offset = 4 */
+/* 20 */	0xa,		/* FC_FLOAT */
+			0x0,		/* 0 */
+
+	/* Return value */
+
+/* 22 */	NdrFcShort( 0x70 ),	/* Flags:  out, return, base type, */
+/* 24 */	NdrFcShort( 0x8 ),	/* x86 Stack size/offset = 8 */
+/* 26 */	0x8,		/* FC_LONG */
+			0x0,		/* 0 */
+
+	/* Procedure SetRateDelta */
+
+/* 28 */	0x33,		/* FC_AUTO_HANDLE */
+			0x6c,		/* Old Flags:  object, Oi2 */
+/* 30 */	NdrFcLong( 0x0 ),	/* 0 */
+/* 34 */	NdrFcShort( 0x4 ),	/* 4 */
+/* 36 */	NdrFcShort( 0xc ),	/* x86 Stack size/offset = 12 */
+/* 38 */	NdrFcShort( 0x8 ),	/* 8 */
+/* 40 */	NdrFcShort( 0x8 ),	/* 8 */
+/* 42 */	0x4,		/* Oi2 Flags:  has return, */
+			0x2,		/* 2 */
+
+	/* Parameter newRateDeltas */
+
+/* 44 */	NdrFcShort( 0x48 ),	/* Flags:  in, base type, */
+/* 46 */	NdrFcShort( 0x4 ),	/* x86 Stack size/offset = 4 */
+/* 48 */	0xa,		/* FC_FLOAT */
+			0x0,		/* 0 */
+
+	/* Return value */
+
+/* 50 */	NdrFcShort( 0x70 ),	/* Flags:  out, return, base type, */
+/* 52 */	NdrFcShort( 0x8 ),	/* x86 Stack size/offset = 8 */
+/* 54 */	0x8,		/* FC_LONG */
+			0x0,		/* 0 */
+
+			0x0
+        }
+    };
+
+static const TempoChange_MIDL_TYPE_FORMAT_STRING TempoChange__MIDL_TypeFormatString =
+    {
+        0,
+        {
+			NdrFcShort( 0x0 ),	/* 0 */
+
+			0x0
+        }
+    };
 
 
 /* Object interface: IUnknown, ver. 0.0,
@@ -52,203 +182,53 @@ extern const MIDL_PROC_FORMAT_STRING __MIDL_ProcFormatString;
 /* Object interface: ICFTempoChangeStats, ver. 0.0,
    GUID={0x9CE7AB1A,0x61B0,0x48bb,{0xBE,0x36,0x0B,0x4B,0x17,0x7E,0xEE,0xF7}} */
 
-
-extern const MIDL_STUB_DESC Object_StubDesc;
-
-
 #pragma code_seg(".orpc")
+static const unsigned short ICFTempoChangeStats_FormatStringOffsetTable[] =
+    {
+    0,
+    28
+    };
 
-HRESULT STDMETHODCALLTYPE ICFTempoChangeStats_SetTempoDelta_Proxy( 
-    ICFTempoChangeStats __RPC_FAR * This,
-    /* [in] */ float newTempoDeltas)
+static const MIDL_STUBLESS_PROXY_INFO ICFTempoChangeStats_ProxyInfo =
+    {
+    &Object_StubDesc,
+    TempoChange__MIDL_ProcFormatString.Format,
+    &ICFTempoChangeStats_FormatStringOffsetTable[-3],
+    0,
+    0,
+    0
+    };
+
+
+static const MIDL_SERVER_INFO ICFTempoChangeStats_ServerInfo = 
+    {
+    &Object_StubDesc,
+    0,
+    TempoChange__MIDL_ProcFormatString.Format,
+    &ICFTempoChangeStats_FormatStringOffsetTable[-3],
+    0,
+    0,
+    0,
+    0};
+CINTERFACE_PROXY_VTABLE(5) _ICFTempoChangeStatsProxyVtbl = 
 {
+    &ICFTempoChangeStats_ProxyInfo,
+    &IID_ICFTempoChangeStats,
+    IUnknown_QueryInterface_Proxy,
+    IUnknown_AddRef_Proxy,
+    IUnknown_Release_Proxy ,
+    (void *) (INT_PTR) -1 /* ICFTempoChangeStats::SetTempoDelta */ ,
+    (void *) (INT_PTR) -1 /* ICFTempoChangeStats::SetRateDelta */
+};
 
-    HRESULT _RetVal;
-    
-    RPC_MESSAGE _RpcMessage;
-    
-    MIDL_STUB_MESSAGE _StubMsg;
-    
-    RpcTryExcept
-        {
-        NdrProxyInitialize(
-                      ( void __RPC_FAR *  )This,
-                      ( PRPC_MESSAGE  )&_RpcMessage,
-                      ( PMIDL_STUB_MESSAGE  )&_StubMsg,
-                      ( PMIDL_STUB_DESC  )&Object_StubDesc,
-                      3);
-        
-        
-        
-        RpcTryFinally
-            {
-            
-            _StubMsg.BufferLength = 4U;
-            NdrProxyGetBuffer(This, &_StubMsg);
-            *(( float __RPC_FAR * )_StubMsg.Buffer)++ = newTempoDeltas;
-            
-            NdrProxySendReceive(This, &_StubMsg);
-            
-            if ( (_RpcMessage.DataRepresentation & 0X0000FFFFUL) != NDR_LOCAL_DATA_REPRESENTATION )
-                NdrConvert( (PMIDL_STUB_MESSAGE) &_StubMsg, (PFORMAT_STRING) &__MIDL_ProcFormatString.Format[0] );
-            
-            _RetVal = *(( HRESULT __RPC_FAR * )_StubMsg.Buffer)++;
-            
-            }
-        RpcFinally
-            {
-            NdrProxyFreeBuffer(This, &_StubMsg);
-            
-            }
-        RpcEndFinally
-        
-        }
-    RpcExcept(_StubMsg.dwStubPhase != PROXY_SENDRECEIVE)
-        {
-        _RetVal = NdrProxyErrorHandler(RpcExceptionCode());
-        }
-    RpcEndExcept
-    return _RetVal;
-}
-
-void __RPC_STUB ICFTempoChangeStats_SetTempoDelta_Stub(
-    IRpcStubBuffer *This,
-    IRpcChannelBuffer *_pRpcChannelBuffer,
-    PRPC_MESSAGE _pRpcMessage,
-    DWORD *_pdwStubPhase)
+const CInterfaceStubVtbl _ICFTempoChangeStatsStubVtbl =
 {
-    HRESULT _RetVal;
-    MIDL_STUB_MESSAGE _StubMsg;
-    float newTempoDeltas;
-    
-NdrStubInitialize(
-                     _pRpcMessage,
-                     &_StubMsg,
-                     &Object_StubDesc,
-                     _pRpcChannelBuffer);
-    RpcTryFinally
-        {
-        if ( (_pRpcMessage->DataRepresentation & 0X0000FFFFUL) != NDR_LOCAL_DATA_REPRESENTATION )
-            NdrConvert( (PMIDL_STUB_MESSAGE) &_StubMsg, (PFORMAT_STRING) &__MIDL_ProcFormatString.Format[0] );
-        
-        newTempoDeltas = *(( float __RPC_FAR * )_StubMsg.Buffer)++;
-        
-        
-        *_pdwStubPhase = STUB_CALL_SERVER;
-        _RetVal = (((ICFTempoChangeStats*) ((CStdStubBuffer *)This)->pvServerObject)->lpVtbl) -> SetTempoDelta((ICFTempoChangeStats *) ((CStdStubBuffer *)This)->pvServerObject,newTempoDeltas);
-        
-        *_pdwStubPhase = STUB_MARSHAL;
-        
-        _StubMsg.BufferLength = 4U;
-        NdrStubGetBuffer(This, _pRpcChannelBuffer, &_StubMsg);
-        *(( HRESULT __RPC_FAR * )_StubMsg.Buffer)++ = _RetVal;
-        
-        }
-    RpcFinally
-        {
-        }
-    RpcEndFinally
-    _pRpcMessage->BufferLength = 
-        (unsigned int)((long)_StubMsg.Buffer - (long)_pRpcMessage->Buffer);
-    
-}
-
-
-HRESULT STDMETHODCALLTYPE ICFTempoChangeStats_SetRateDelta_Proxy( 
-    ICFTempoChangeStats __RPC_FAR * This,
-    /* [in] */ float newRateDeltas)
-{
-
-    HRESULT _RetVal;
-    
-    RPC_MESSAGE _RpcMessage;
-    
-    MIDL_STUB_MESSAGE _StubMsg;
-    
-    RpcTryExcept
-        {
-        NdrProxyInitialize(
-                      ( void __RPC_FAR *  )This,
-                      ( PRPC_MESSAGE  )&_RpcMessage,
-                      ( PMIDL_STUB_MESSAGE  )&_StubMsg,
-                      ( PMIDL_STUB_DESC  )&Object_StubDesc,
-                      4);
-        
-        
-        
-        RpcTryFinally
-            {
-            
-            _StubMsg.BufferLength = 4U;
-            NdrProxyGetBuffer(This, &_StubMsg);
-            *(( float __RPC_FAR * )_StubMsg.Buffer)++ = newRateDeltas;
-            
-            NdrProxySendReceive(This, &_StubMsg);
-            
-            if ( (_RpcMessage.DataRepresentation & 0X0000FFFFUL) != NDR_LOCAL_DATA_REPRESENTATION )
-                NdrConvert( (PMIDL_STUB_MESSAGE) &_StubMsg, (PFORMAT_STRING) &__MIDL_ProcFormatString.Format[0] );
-            
-            _RetVal = *(( HRESULT __RPC_FAR * )_StubMsg.Buffer)++;
-            
-            }
-        RpcFinally
-            {
-            NdrProxyFreeBuffer(This, &_StubMsg);
-            
-            }
-        RpcEndFinally
-        
-        }
-    RpcExcept(_StubMsg.dwStubPhase != PROXY_SENDRECEIVE)
-        {
-        _RetVal = NdrProxyErrorHandler(RpcExceptionCode());
-        }
-    RpcEndExcept
-    return _RetVal;
-}
-
-void __RPC_STUB ICFTempoChangeStats_SetRateDelta_Stub(
-    IRpcStubBuffer *This,
-    IRpcChannelBuffer *_pRpcChannelBuffer,
-    PRPC_MESSAGE _pRpcMessage,
-    DWORD *_pdwStubPhase)
-{
-    HRESULT _RetVal;
-    MIDL_STUB_MESSAGE _StubMsg;
-    float newRateDeltas;
-    
-NdrStubInitialize(
-                     _pRpcMessage,
-                     &_StubMsg,
-                     &Object_StubDesc,
-                     _pRpcChannelBuffer);
-    RpcTryFinally
-        {
-        if ( (_pRpcMessage->DataRepresentation & 0X0000FFFFUL) != NDR_LOCAL_DATA_REPRESENTATION )
-            NdrConvert( (PMIDL_STUB_MESSAGE) &_StubMsg, (PFORMAT_STRING) &__MIDL_ProcFormatString.Format[0] );
-        
-        newRateDeltas = *(( float __RPC_FAR * )_StubMsg.Buffer)++;
-        
-        
-        *_pdwStubPhase = STUB_CALL_SERVER;
-        _RetVal = (((ICFTempoChangeStats*) ((CStdStubBuffer *)This)->pvServerObject)->lpVtbl) -> SetRateDelta((ICFTempoChangeStats *) ((CStdStubBuffer *)This)->pvServerObject,newRateDeltas);
-        
-        *_pdwStubPhase = STUB_MARSHAL;
-        
-        _StubMsg.BufferLength = 4U;
-        NdrStubGetBuffer(This, _pRpcChannelBuffer, &_StubMsg);
-        *(( HRESULT __RPC_FAR * )_StubMsg.Buffer)++ = _RetVal;
-        
-        }
-    RpcFinally
-        {
-        }
-    RpcEndFinally
-    _pRpcMessage->BufferLength = 
-        (unsigned int)((long)_StubMsg.Buffer - (long)_pRpcMessage->Buffer);
-    
-}
-
+    &IID_ICFTempoChangeStats,
+    &ICFTempoChangeStats_ServerInfo,
+    5,
+    0, /* pure interpreted */
+    CStdStubBuffer_METHODS
+};
 
 static const MIDL_STUB_DESC Object_StubDesc = 
     {
@@ -260,82 +240,27 @@ static const MIDL_STUB_DESC Object_StubDesc =
     0,
     0,
     0,
-    __MIDL_TypeFormatString.Format,
+    TempoChange__MIDL_TypeFormatString.Format,
     1, /* -error bounds_check flag */
-    0x10001, /* Ndr library version */
+    0x20000, /* Ndr library version */
     0,
-    0x50100a4, /* MIDL Version 5.1.164 */
+    0x700022b, /* MIDL Version 7.0.555 */
     0,
     0,
     0,  /* notify & notify_flag routine table */
-    1,  /* Flags */
-    0,  /* Reserved3 */
-    0,  /* Reserved4 */
-    0   /* Reserved5 */
+    0x1, /* MIDL flag */
+    0, /* cs routines */
+    0,   /* proxy/server info */
+    0
     };
 
-const CINTERFACE_PROXY_VTABLE(5) _ICFTempoChangeStatsProxyVtbl = 
-{
-    &IID_ICFTempoChangeStats,
-    IUnknown_QueryInterface_Proxy,
-    IUnknown_AddRef_Proxy,
-    IUnknown_Release_Proxy ,
-    ICFTempoChangeStats_SetTempoDelta_Proxy ,
-    ICFTempoChangeStats_SetRateDelta_Proxy
-};
-
-
-static const PRPC_STUB_FUNCTION ICFTempoChangeStats_table[] =
-{
-    ICFTempoChangeStats_SetTempoDelta_Stub,
-    ICFTempoChangeStats_SetRateDelta_Stub
-};
-
-const CInterfaceStubVtbl _ICFTempoChangeStatsStubVtbl =
-{
-    &IID_ICFTempoChangeStats,
-    0,
-    5,
-    &ICFTempoChangeStats_table[-3],
-    CStdStubBuffer_METHODS
-};
-
-#pragma data_seg(".rdata")
-
-#if !defined(__RPC_WIN32__)
-#error  Invalid build platform for this stub.
-#endif
-
-static const MIDL_PROC_FORMAT_STRING __MIDL_ProcFormatString =
-    {
-        0,
-        {
-			0x4e,		/* FC_IN_PARAM_BASETYPE */
-			0xa,		/* FC_FLOAT */
-/*  2 */	0x53,		/* FC_RETURN_PARAM_BASETYPE */
-			0x8,		/* FC_LONG */
-
-			0x0
-        }
-    };
-
-static const MIDL_TYPE_FORMAT_STRING __MIDL_TypeFormatString =
-    {
-        0,
-        {
-			NdrFcShort( 0x0 ),	/* 0 */
-
-			0x0
-        }
-    };
-
-const CInterfaceProxyVtbl * _TempoChange_ProxyVtblList[] = 
+const CInterfaceProxyVtbl * const _TempoChange_ProxyVtblList[] = 
 {
     ( CInterfaceProxyVtbl *) &_ICFTempoChangeStatsProxyVtbl,
     0
 };
 
-const CInterfaceStubVtbl * _TempoChange_StubVtblList[] = 
+const CInterfaceStubVtbl * const _TempoChange_StubVtblList[] = 
 {
     ( CInterfaceStubVtbl *) &_ICFTempoChangeStatsStubVtbl,
     0
@@ -367,12 +292,20 @@ const ExtendedProxyFileInfo TempoChange_ProxyFileInfo =
     (PCInterfaceProxyVtblList *) & _TempoChange_ProxyVtblList,
     (PCInterfaceStubVtblList *) & _TempoChange_StubVtblList,
     (const PCInterfaceName * ) & _TempoChange_InterfaceNamesList,
-    0, // no delegation
+    0, /* no delegation */
     & _TempoChange_IID_Lookup, 
     1,
-    1,
+    2,
     0, /* table of [async_uuid] interfaces */
     0, /* Filler1 */
     0, /* Filler2 */
     0  /* Filler3 */
 };
+#pragma optimize("", on )
+#if _MSC_VER >= 1200
+#pragma warning(pop)
+#endif
+
+
+#endif /* !defined(_M_IA64) && !defined(_M_AMD64)*/
+

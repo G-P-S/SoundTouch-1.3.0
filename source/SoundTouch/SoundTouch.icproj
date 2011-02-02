@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="11.1"
+	Name="SoundTouch"
+	ProjectGUID="{7B04D1FC-D5D6-452D-9292-01B3974C4129}"
+	VCNestedProjectGUID="{BAE45FA3-4C5C-45B5-BF1F-E1656C09066D}"
+	VCNestedProjectFileName="SoundTouch.vcproj">
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

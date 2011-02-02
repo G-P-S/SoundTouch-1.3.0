@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="11.1"
+	Name="CFTempoChange"
+	ProjectGUID="{B633155D-12F2-4A11-A547-E4A47732EEB4}"
+	VCNestedProjectGUID="{40EC9EEC-72AA-4318-9FBA-05D95F40F47E}"
+	VCNestedProjectFileName="TempoChange.vcproj">
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>
