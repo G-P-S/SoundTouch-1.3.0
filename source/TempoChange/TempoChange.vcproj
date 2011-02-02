@@ -189,7 +189,7 @@
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib"
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreDefaultLibraryNames="libcmt.lib;libc.lib"
 				ModuleDefinitionFile=".\TempoChange.DEF"
 				ProgramDatabaseFile=".\Release/CFTempoChange.pdb"
 				GenerateMapFile="true"
