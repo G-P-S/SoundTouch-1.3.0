@@ -6,7 +6,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Wed Feb 02 12:03:25 2011
+/* at Tue Mar 05 18:01:05 2013
  */
 /* Compiler settings for TempoChange.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
